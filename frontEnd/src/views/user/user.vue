@@ -18,9 +18,9 @@
 		<el-form-item label="简介">
 			<el-input type="textarea" v-model="form.desc"></el-input>
 		</el-form-item>
-		<el-form-item>
-			<el-button type="primary">立即创建</el-button>
-			<el-button @click.native.prevent>取消</el-button>
+		<el-form-item class="btn">
+			<el-button type="primary">保存修改</el-button>
+			<!-- <el-button @click.native.prevent>取消</el-button> -->
 		</el-form-item>
 	</el-form>
 </template>
@@ -46,3 +46,9 @@
 	}
 
 </script>
+<style scoped>
+.el-button--primary{
+    display: block;
+    margin: 0 auto;
+}
+</style>
