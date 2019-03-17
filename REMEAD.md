@@ -11,7 +11,6 @@
 ### 个人资料
 - 显示个人资料信息，可修改
 
-
 ### 历史统计
 - 按条件筛选
 
@@ -45,3 +44,78 @@
 
 ## 开发技术
 > Vue + Element-ui + Node.js + Mysql
+
+## 数据库设计 Mysql
+```
+    Table Member(   // 成员
+        _id: number,
+        name: string,
+        gender: number,
+        phone: number,
+        email: string,
+        level: number,
+        pwd: md5(string),
+        avatar: string,
+        store: number,
+        rgt: date,
+        del: boolean
+    );
+
+    Table Store(    // 分店
+        _id: number,
+        name: string,
+        del: boolean
+    );
+
+    Table Vip(  // 会员
+        _id: number,
+        name: string,
+        phone: number,
+        gender: number,
+        rgt: date,
+        count: number,   // 积分
+        del: boolean
+    );
+
+    Table Orderform(    // 订单
+        _id: number,
+        ordernum: number,
+        user: string,
+        phone: number,
+        accept: number, // 受理人
+        accepted: boolean,
+        accepttime: date,
+        complete: boolean,
+        del: boolean
+    );
+
+    Table Commodit(     // 价格表
+        _id: number,
+        title: string,
+        price: number,
+        type: number,
+        del: boolean
+    );
+
+    Table Clothes(
+        _id: number,
+        type: number,
+        mark: string,
+        color: string,
+        vipid: number,
+        del: boolean
+    );
+
+    Table Recyclebin(
+        _id: number,
+        from: string,
+        fromid: number,
+        time: date
+    );
+
+    Table Config(
+        _id: number,
+        logo: string,
+        page404: string
+    )
+```
