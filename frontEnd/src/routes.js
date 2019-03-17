@@ -14,15 +14,14 @@ import userPage from './views/user/user.vue'
 import historyPage from './views/history/history.vue'
 import manageHistory from './views/manage/history.vue'
 import manageStock from './views/manage/stock.vue'
+import managePrice from './views/manage/price.vue'
 import orderPage from './views/order/order.vue'
 import memberList from './views/member/list.vue'
 import memberFlash from './views/member/flash.vue'
 import staffMsg from './views/staff/msg.vue'
 import staffAdd from './views/staff/add.vue'
-import webNotfound from './views/webAdmin/404.vue'
-import webAbout from './views/webAdmin/about.vue'
+import webHandbook from './views/webAdmin/handbook.vue'
 import webAdvertise from './views/webAdmin/advertise.vue'
-import webHelp from './views/webAdmin/help.vue'
 import recovery from './views/recovery/recovery.vue'
 
 
@@ -78,7 +77,8 @@ let routes = [
         iconCls: 'fa fa-asterisk',
         children: [
             { path: '/manage_history', component: manageHistory, name: '库存衣物' },
-            { path: '/manage_stock', component: manageStock, name: '历史衣物' }
+            { path: '/manage_stock', component: manageStock, name: '历史衣物' },
+            { path: '/manage_price', component: managePrice, name: '价格表' },
         ]
     },
     {
@@ -117,10 +117,8 @@ let routes = [
         name: '网站管理',
         iconCls: 'fa fa-cubes',
         children: [
-            { path: '/web_advertise', component: webAdvertise, name: '网站信息 `logo 公告`' },
-            { path: '/web_help', component: webHelp, name: 'help' },
-            { path: '/web_about', component: webAbout, name: 'about us' },
-            { path: '/web_notfound', component: webNotfound, name: '404' }
+            { path: '/web_advertise', component: webAdvertise, name: '网站信息' },
+            { path: '/web_handbook', component: webHandbook, name: '员工手册' }
         ]
     },
     {
