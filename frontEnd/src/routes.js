@@ -117,10 +117,10 @@ let routes = [
         name: '网站管理',
         iconCls: 'fa fa-cubes',
         children: [
-            { path: '/web_notfound', component: webNotfound, name: '网站信息 `logo 公告`' },
-            { path: '/web_about', component: webAbout, name: 'help' },
-            { path: '/web_advertise', component: webAdvertise, name: 'about us' },
-            { path: '/web_help', component: webHelp, name: '404' }
+            { path: '/web_advertise', component: webAdvertise, name: '网站信息 `logo 公告`' },
+            { path: '/web_help', component: webHelp, name: 'help' },
+            { path: '/web_about', component: webAbout, name: 'about us' },
+            { path: '/web_notfound', component: webNotfound, name: '404' }
         ]
     },
     {
