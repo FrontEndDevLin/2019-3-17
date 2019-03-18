@@ -16,72 +16,82 @@
 </template>
 
 <script>
-  import { httpPost } from '../api/api';
-  export default {
-    data() {
-      return {
-        logining: false,
-        ruleForm2: {
-          account: 'admin',
-          checkPass: '123456'
-        },
-        rules2: {
-          account: [
-            { required: true, message: '请输入账号', trigger: 'blur' },
-          ],
-          checkPass: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-          ]
-        },
-        checked: true
-      };
-    },
-    methods: {
-      handleSubmit2(ev) {
-        var _this = this;
-        this.$refs.ruleForm2.validate((valid) => {
-          if (valid) {
-            this.logining = true;
-            var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
-            // httpPost(loginParams).then( data => {
-              this.logining = false;
+import { httpPost,httpGet,requestLogin } from "../api/api";
+import axios from "axios";
+export default {
+  data() {
+    return {
+      logining: false,
+      ruleForm2: {
+        account: "admin",
+        checkPass: "123456"
+      },
+      rules2: {
+        account: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        checkPass: [{ required: true, message: "请输入密码", trigger: "blur" }]
+      },
+      checked: true
+    };
+  },
+  methods: {
+    handleSubmit2(ev) {
+      var _this = this;
+      this.$refs.ruleForm2.validate(valid => {
+        if (valid) {
+          this.logining = true;
+          var loginParams = {
+            name: this.ruleForm2.account,
+            pwd: this.ruleForm2.checkPass
+          };
+          // axios.get('http://192.168.2.108:4449/login',loginParams).then( res => {
+          //   console.log(res)
+          // })
+          httpGet('/login',loginParams).then(res => {
+            this.logining = false;
             //   let { msg, code, user } = data;
-              // sessionStorage.setItem('user', JSON.stringify(user));
-              sessionStorage.setItem('user', JSON.stringify(loginParams));//test
-              this.$router.push({ path: '/table' });
-              console.log(1)
-            // });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      }
+            // sessionStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('user', JSON.stringify(loginParams));
+            this.$router.push({ path: '/table' });
+            console.log(11,res)
+
+          })
+
+          // fetch('http://192.168.2.108:4449/login?name=admin&pwd=123')
+          // .then(response => response.json())
+          // .then(data => {
+          //   // data就是我们请求的repos
+          //   console.log(data)
+          // });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     }
   }
-
+};
 </script>
 
 <style lang="scss" scoped>
-  .login-container {
-    /*box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);*/
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    background-clip: padding-box;
-    margin: 180px auto;
-    width: 350px;
-    padding: 35px 35px 15px 35px;
-    background: #fff;
-    border: 1px solid #eaeaea;
-    box-shadow: 0 0 25px #cac6c6;
-    .title {
-      margin: 0px auto 40px auto;
-      text-align: center;
-      color: #505458;
-    }
-    .remember {
-      margin: 0px 0px 35px 0px;
-    }
+.login-container {
+  /*box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);*/
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  background-clip: padding-box;
+  margin: 180px auto;
+  width: 350px;
+  padding: 35px 35px 15px 35px;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 0 25px #cac6c6;
+  .title {
+    margin: 0px auto 40px auto;
+    text-align: center;
+    color: #505458;
   }
+  .remember {
+    margin: 0px 0px 35px 0px;
+  }
+}
 </style>
