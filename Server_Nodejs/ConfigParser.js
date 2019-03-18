@@ -9,7 +9,11 @@ function ConfigParser () {
 
     this.Parse = function (sectionName, keyName) {
         let config = ini.parse(fs.readFileSync(path, "utf-8"));
-        return config[sectionName][keyName] || null;
+        if (!keyName) {
+            return config[sectionName] || null;
+        } else {
+            return config[sectionName][keyName] || null;
+        }
     }
 }
 

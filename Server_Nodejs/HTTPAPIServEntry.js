@@ -5,34 +5,13 @@
 function HttpAPIServEntry() {
     this.NetStart = function () {
         const http = require("http");
-        let ConfParser = require("./ConfigParser");
-        let port = ConfParser.Parse("port", "http-API");
-
-        let qs = require("querystring");
+        let HTTPAPIHandle = require("./HTTPAPIHandle");
+        let port = require("./ConfigParser").Parse("port", "http-API");
 
         http.createServer((req, res) => {
-            let handle = req.url.split("?")[0].toLowerCase();
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            switch (handle) {
-                case "/login": {
-                    let paramStr = req.url.split("?")[1];
-                    let param = qs.parse(paramStr);
-                    let name = param["name"], pwd = param["pwd"];
-                    let data = {};
-                    if (name == "admin" && pwd == "123") {
-                        data = { "code": 200, "msg": "succ" };
-                    } else {
-                        data = { "code": 400, "msg": "fail" };
-                    }
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify(data));
-                } break;
-
-                default:
-                    break;
-            }
+            HTTPAPIHandle.OnParse(req, res);
         }).listen(port, () => {
-            console.log(`HTTP-API server is listen on ${port}`);
+            console.log(`HTTP-API server is listening on ${port}`);
         });
     }
 }

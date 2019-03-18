@@ -122,3 +122,25 @@
         page404: string
     )
 ```
+
+## API
+添加价格表项目
+    http://192.168.2.108:4449/cloth/addcommodit
+```
+    method: get
+    param: {
+        title: '长袖', // unique
+        price: 20,   // default 10
+        type: 0     // default 0  0代表织物类 基本只有这个
+    }
+```
+
+登录
+    http://192.168.2.108:4449/auth/login
+```
+    method: post
+    param: {
+        phone: 
+        pwd:
+    }
+```
