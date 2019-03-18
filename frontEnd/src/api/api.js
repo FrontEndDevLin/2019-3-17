@@ -1,7 +1,8 @@
 import axios from 'axios';
+import qs from 'qs';
 
-let base = '';//域名
-export const requestLogin = params => { return axios.post(`${base}/login`, params).then(res => res.data); };
+let base = 'http://192.168.2.108';//域名
+export const requestLogin = params => { return axios.get(`${base}/login`, params).then(res => res.data); };
 
 export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
 
@@ -16,23 +17,31 @@ export const editUser = params => { return axios.get(`${base}/user/edit`, { para
 export const addUser = params => { return axios.get(`${base}/user/add`, { params: params }); };
 
 
-export const httpPost = params => {
-    axios.post('url',params)
-         .then(res => {
-             if(res.ack == 'success'){
+export const httpPost = (url,params) => {
+    axios.post(base + url, qs.stringify(params))
+        .then(res => {
+            if (res.code == 200) {
                 return res.data;
-             }else{
-                alert('error');//res.msg
-             }
+            } else {
+                console.log(res)
+                alert(res.msg);
+            }
+        })
+        .catch(res => {
+            console.log(res, '请求失败')
         });
 };
-export const httpGet = params => {
-    axios.post('url',params)
-         .then(res => {
-             if(res.ack == 'success'){
+export const httpGet = (url,params) => {
+    return axios.get(base + url, qs.stringify(params))
+        .then(res => {
+            if(res.code == 200){
                 return res.data;
-             }else{
-                alert('error');//res.msg
-             }
+            }else{
+                console.log(res);
+                alert(res.msg);
+            }
+        })
+        .catch(res => {
+            console.log(res,'请求失败')
         });
 };
