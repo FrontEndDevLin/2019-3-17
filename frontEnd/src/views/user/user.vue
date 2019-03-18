@@ -15,6 +15,17 @@
                 <el-radio label="女"></el-radio>
 			</el-radio-group>
         </el-form-item>
+		<el-form-item label="头像">
+			<el-upload
+				class="avatar-uploader"
+				action="https://jsonplaceholder.typicode.com/posts/"
+				:show-file-list="false"
+				:on-success="handleAvatarSuccess"
+				:before-upload="beforeAvatarUpload">
+				<img v-if="imageUrl" :src="imageUrl" class="avatar">
+				<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+			</el-upload>
+		</el-form-item>
 		<el-form-item label="简介">
 			<el-input type="textarea" v-model="form.desc"></el-input>
 		</el-form-item>
@@ -26,29 +37,74 @@
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				form: {
-					name: '',
-					email: '',
-					tel: '',
-					sex: '',
-					desc: ''
-				}
-			}
-		},
-		methods: {
-			onSubmit() {
-				console.log('submit!');
-			}
-		}
-	}
+export default {
+  data() {
+    return {
+      form: {
+        name: "",
+        email: "",
+        tel: "",
+        sex: "",
+        desc: ""
+      },
+      imageUrl: ""
+    };
+  },
+  methods: {
+    onSubmit() {
+      console.log("submit!");
+    },
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
 
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    }
+  }
+};
 </script>
-<style scoped>
-.el-button--primary{
-    display: block;
-    margin: 0 auto;
+<style lang="scss" scoped>
+.el-form-item{
+	.avatar-uploader{ 
+		border: 1px dashed #d9d9d9 !important;
+		width: 178px;
+    	height: 178px;
+		// /deep/ .el-upload {
+		// 	border: 1px dashed #d9d9d9 !important;
+		// 	border-radius: 6px;
+		// 	cursor: pointer;
+		// 	position: relative;
+		// 	overflow: hidden;
+		// 	&:hover {
+		// 		border-color: #409eff;
+		// 	}
+		// }
+	}
+	.avatar-uploader-icon {
+	font-size: 28px;
+	color: #8c939d;
+	width: 178px;
+	height: 178px;
+	line-height: 178px;
+	text-align: center;
+	}
+	.avatar {
+	width: 178px;
+	height: 178px;
+	display: block;
+	}
+	.el-button--primary {
+	display: block;
+	margin: 0 auto;
+	}
 }
 </style>

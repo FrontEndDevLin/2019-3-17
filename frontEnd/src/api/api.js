@@ -1,7 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 
-let base = 'http://192.168.2.108';//域名
+let base = 'http://192.168.2.108:4449';//域名
 export const requestLogin = params => { return axios.get(`${base}/login`, params).then(res => res.data); };
 
 export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
@@ -20,11 +20,11 @@ export const addUser = params => { return axios.get(`${base}/user/add`, { params
 export const httpPost = (url,params) => {
     axios.post(base + url, qs.stringify(params))
         .then(res => {
-            if (res.code == 200) {
+            if (res.data.code == 200) {
                 return res.data;
             } else {
                 console.log(res)
-                alert(res.msg);
+                alert(res.data.msg);
             }
         })
         .catch(res => {
@@ -32,13 +32,14 @@ export const httpPost = (url,params) => {
         });
 };
 export const httpGet = (url,params) => {
-    return axios.get(base + url, qs.stringify(params))
+    return axios.get(base + url+'?'+qs.stringify(params))
         .then(res => {
-            if(res.code == 200){
+            // console.log(13,qs.stringify(params))
+            if(res.data.code == 200){
                 return res.data;
             }else{
                 console.log(res);
-                alert(res.msg);
+                alert(res.data.msg);
             }
         })
         .catch(res => {

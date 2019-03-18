@@ -23,8 +23,8 @@ export default {
     return {
       logining: false,
       ruleForm2: {
-        account: "admin",
-        checkPass: "123456"
+        account: "13622222222",
+        checkPass: "123abc"
       },
       rules2: {
         account: [{ required: true, message: "请输入账号", trigger: "blur" }],
@@ -40,28 +40,15 @@ export default {
         if (valid) {
           this.logining = true;
           var loginParams = {
-            name: this.ruleForm2.account,
+            phone: this.ruleForm2.account,
             pwd: this.ruleForm2.checkPass
           };
-          // axios.get('http://192.168.2.108:4449/login',loginParams).then( res => {
-          //   console.log(res)
-          // })
           httpGet('/login',loginParams).then(res => {
+            // console.log(11,res)
             this.logining = false;
-            //   let { msg, code, user } = data;
-            // sessionStorage.setItem('user', JSON.stringify(user));
             sessionStorage.setItem('user', JSON.stringify(loginParams));
-            this.$router.push({ path: '/table' });
-            console.log(11,res)
-
+            this.$router.push({ path: '/' });
           })
-
-          // fetch('http://192.168.2.108:4449/login?name=admin&pwd=123')
-          // .then(response => response.json())
-          // .then(data => {
-          //   // data就是我们请求的repos
-          //   console.log(data)
-          // });
         } else {
           console.log("error submit!!");
           return false;
