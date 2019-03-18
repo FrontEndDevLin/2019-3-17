@@ -110,6 +110,7 @@
     Table Recyclebin(
         _id: number,
         from: string,
+        type: number,
         fromid: number,
         time: date
     );
@@ -117,6 +118,7 @@
     Table Config(
         _id: number,
         logo: string,
+        title: string,
         page404: string
     )
 ```
