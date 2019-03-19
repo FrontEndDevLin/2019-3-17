@@ -1,20 +1,21 @@
 import axios from 'axios';
 import qs from 'qs';
 
-let base = 'http://192.168.2.108:4449';//域名
-// export const requestLogin = params => { return axios.get(`${base}/login`, params).then(res => res.data); };
+let base = '';//域名
+// let base = 'http://192.168.2.108:4449';//域名
+export const requestLogin = params => { return axios.get(`${base}/login`, params).then(res => res.data); };
 
-// export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
+export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
 
-// export const getUserListPage = params => { return axios.get(`${base}/user/listpage`, { params: params }); };
+export const getUserListPage = params => { return axios.get(`${base}/user/listpage`, { params: params }); };
 
-// export const removeUser = params => { return axios.get(`${base}/user/remove`, { params: params }); };
+export const removeUser = params => { return axios.get(`${base}/user/remove`, { params: params }); };
 
-// export const batchRemoveUser = params => { return axios.get(`${base}/user/batchremove`, { params: params }); };
+export const batchRemoveUser = params => { return axios.get(`${base}/user/batchremove`, { params: params }); };
 
-// export const editUser = params => { return axios.get(`${base}/user/edit`, { params: params }); };
+export const editUser = params => { return axios.get(`${base}/user/edit`, { params: params }); };
 
-// export const addUser = params => { return axios.get(`${base}/user/add`, { params: params }); };
+export const addUser = params => { return axios.get(`${base}/user/add`, { params: params }); };
 
 
 // export const httpPost = (url, params) => {

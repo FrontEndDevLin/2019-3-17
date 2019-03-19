@@ -21,15 +21,17 @@
 			</el-table-column>
 			<el-table-column type="index" width="60">
 			</el-table-column>
-			<el-table-column prop="name" label="姓名" width="120" sortable>
+			<el-table-column prop="name" label="衣物名称" width="120" sortable>
 			</el-table-column>
-			<el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable>
+			<!-- <el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable>
+			</el-table-column> -->
+			<el-table-column prop="price" label="价格" width="100" sortable>
 			</el-table-column>
-			<el-table-column prop="age" label="年龄" width="100" sortable>
+			<el-table-column prop="age" label="数量" width="100" sortable>
 			</el-table-column>
-			<el-table-column prop="birth" label="生日" width="120" sortable>
+			<el-table-column prop="birth" label="有效时间" width="120" sortable>
 			</el-table-column>
-			<el-table-column prop="addr" label="地址" min-width="180" sortable>
+			<el-table-column prop="addr" label="备注" min-width="180" sortable>
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template slot-scope="scope">
@@ -49,22 +51,25 @@
 		<!--编辑界面-->
 		<el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
 			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-				<el-form-item label="姓名" prop="name">
+				<el-form-item label="衣物名称" prop="name">
 					<el-input v-model="editForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="性别">
+				<!-- <el-form-item label="性别">
 					<el-radio-group v-model="editForm.sex">
 						<el-radio class="radio" :label="1">男</el-radio>
 						<el-radio class="radio" :label="0">女</el-radio>
 					</el-radio-group>
+				</el-form-item> -->
+				<el-form-item label="价格">
+					<el-input-number v-model="editForm.price" :min="0" :max="200"></el-input-number>
 				</el-form-item>
-				<el-form-item label="年龄">
+				<el-form-item label="数量">
 					<el-input-number v-model="editForm.age" :min="0" :max="200"></el-input-number>
 				</el-form-item>
-				<el-form-item label="生日">
+				<el-form-item label="有效时间">
 					<el-date-picker type="date" placeholder="选择日期" v-model="editForm.birth"></el-date-picker>
 				</el-form-item>
-				<el-form-item label="地址">
+				<el-form-item label="备注">
 					<el-input type="textarea" v-model="editForm.addr"></el-input>
 				</el-form-item>
 			</el-form>
@@ -77,22 +82,25 @@
 		<!--新增界面-->
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-				<el-form-item label="姓名" prop="name">
+				<el-form-item label="衣物名称" prop="name">
 					<el-input v-model="addForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="性别">
+				<!-- <el-form-item label="性别">
 					<el-radio-group v-model="addForm.sex">
 						<el-radio class="radio" :label="1">男</el-radio>
 						<el-radio class="radio" :label="0">女</el-radio>
 					</el-radio-group>
+				</el-form-item> -->
+				<el-form-item label="价格">
+					<el-input-number v-model="editForm.price" :min="0" :max="200"></el-input-number>
 				</el-form-item>
-				<el-form-item label="年龄">
+				<el-form-item label="数量">
 					<el-input-number v-model="addForm.age" :min="0" :max="200"></el-input-number>
 				</el-form-item>
-				<el-form-item label="生日">
+				<el-form-item label="有效时间">
 					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.birth"></el-date-picker>
 				</el-form-item>
-				<el-form-item label="地址">
+				<el-form-item label="备注">
 					<el-input type="textarea" v-model="addForm.addr"></el-input>
 				</el-form-item>
 			</el-form>
@@ -106,9 +114,9 @@
 
 <script>
 import util from "../../common/js/util";
+import Mock from 'mockjs';//delete
 //import NProgress from 'nprogress'
 import {
-  httpGet,
   getUserListPage,
   removeUser,
   batchRemoveUser,
@@ -138,7 +146,8 @@ export default {
         id: 0,
         name: "",
         sex: -1,
-        age: 0,
+		age: 0,
+		price: 0,
         birth: "",
         addr: ""
       },
@@ -153,6 +162,7 @@ export default {
         name: "",
         sex: -1,
         age: 0,
+		price: 0,
         birth: "",
         addr: ""
       }
@@ -169,30 +179,49 @@ export default {
     },
     //获取用户列表
     getUsers() {
-      // let para = {
-      // 	page: this.page,
-      // 	name: this.filters.name
-      // };
-      let param = {
-        title: "长袖", // unique
-        price: 20, // default 10
-        type: 0 // default 0  0代表织物类 基本只有这个
-      };
-      this.listLoading = true;
-      //NProgress.start();
-      // getUserListPage(para).then((res) => {
-      // 	this.total = res.data.total;
-      // 	this.users = res.data.users;
-      // 	this.listLoading = false;
-      // 	//NProgress.done();
-      // });
-	  httpGet("/cloth/addcommodit",param)
-	  .then(res => {
-		  console.log('cloth/addcommodit',res)
-	  })
-	  .catch( ()=>{
-		  this.listLoading = false;
-	  });
+      //   let para = {
+      //     page: this.page,
+      //     name: this.filters.name
+      //   };
+      //   this.listLoading = true;
+      //   //NProgress.start();
+      //   getUserListPage(para).then(res => {
+      //     this.total = res.data.total;
+      //     this.users = res.data.users;
+      //     this.listLoading = false;
+      //     //NProgress.done();
+      //   });
+      this.total = 1;//delete
+      this.listLoading = false;
+      this.users = [];//delete
+
+      for (let i = 0; i < 86; i++) {//delete
+        this.users.push(
+          Mock.mock({
+            id: Mock.Random.guid(),
+			price: Mock.Random.guid(),
+            name: Mock.Random.cname(),
+            addr: Mock.mock("@county(true)"),
+            "age|18-60": 1,
+            birth: Mock.Random.date(),
+            sex: Mock.Random.integer(0, 1)
+          })
+        );
+      }
+
+      //   let param = {
+      //     title: "长袖", // unique
+      //     price: 20, // default 10
+      //     type: 0 // default 0  0代表织物类 基本只有这个
+      //   };
+
+      //   httpGet("/cloth/addcommodit",param)
+      //   .then(res => {
+      // 	  console.log('cloth/addcommodit',res)
+      //   })
+      //   .catch( ()=>{
+      // 	  this.listLoading = false;
+      //   });
     },
     //删除
     handleDel: function(index, row) {
