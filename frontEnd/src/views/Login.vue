@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { httpPost,httpGet,requestLogin } from "../api/api";
+import { httpPost, httpGet, requestLogin } from "../api/api";
 import axios from "axios";
 export default {
   data() {
@@ -43,12 +43,16 @@ export default {
             phone: this.ruleForm2.account,
             pwd: this.ruleForm2.checkPass
           };
-          httpGet('/login',loginParams).then(res => {
-            // console.log(11,res)
-            this.logining = false;
-            sessionStorage.setItem('user', JSON.stringify(loginParams));
-            this.$router.push({ path: '/' });
-          })
+          httpPost("/auth/login", loginParams)
+            .then(res => {
+              // console.log(11,res)
+              this.logining = false;
+              sessionStorage.setItem("user", JSON.stringify(loginParams));
+              this.$router.push({ path: "/" });
+            })
+            .catch(() => {
+              this.logining = false;
+            });
         } else {
           console.log("error submit!!");
           return false;
