@@ -15,9 +15,9 @@ function HTTPAPIHandle() {
         if ( !(router && handle) ) {
             return;
         }
-        // res.setHeader('Access-Control-Allow-Origin', ConfParser.Parse("cors", "acc-host"));
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        // res.setHeader('Access-Control-Allow-Credentials', true);
+        res.setHeader('Access-Control-Allow-Origin', ConfParser.Parse("cors", "acc-host"));
+        // res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Credentials', true);
         switch (router) {
             case "auth": {
                 Auth.OnAuth(req, res, handle);

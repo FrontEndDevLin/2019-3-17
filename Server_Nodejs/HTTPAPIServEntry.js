@@ -7,6 +7,9 @@ function HttpAPIServEntry() {
         const http = require("http");
         let HTTPAPIHandle = require("./HTTPAPIHandle");
         let port = require("./ConfigParser").Parse("port", "http-API");
+        
+        require("./NameSpace").sessionMap = require("./SessionLinked");
+        // console.log(require("./NameSpace").sessionMap);
 
         http.createServer((req, res) => {
             HTTPAPIHandle.OnParse(req, res);

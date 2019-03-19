@@ -77,4 +77,4 @@ CREATE Table Config(
     page404 VARCHAR(256)
 );
 
-INSERT INTO Member VALUES(null, "CEO", 1, 13622222222, DEFAULT, 99, md5("123abc"), "default.png", 0, 1552902178513, DEFAULT);
+INSERT INTO Member VALUES(null, "CEO", 1, 13622222222, DEFAULT, 99, md5("123abc"), "avatar/default/default_003.jpg", 0, 1552902178513, DEFAULT);

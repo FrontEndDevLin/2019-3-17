@@ -143,4 +143,19 @@
         phone: 
         pwd:
     }
+    withCredentials: true
+```
+
+检查登录
+    http://192.168.2.108:4449/auth/checklogin
+```
+    method: post,
+    withCredentials: true
+```
+
+注销
+    http://192.168.2.108:4449/auth/logout
+```
+    method: post,
+    withCredentials: true
 ```
