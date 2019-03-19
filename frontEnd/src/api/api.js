@@ -1,8 +1,8 @@
 import axios from 'axios';
 import qs from 'qs';
 
-let base = '';//域名
-// let base = 'http://192.168.2.108:4449';//域名
+// let base = '';//域名
+let base = 'http://192.168.2.108:4449';//域名
 export const requestLogin = params => { return axios.get(`${base}/login`, params).then(res => res.data); };
 
 export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
@@ -18,35 +18,6 @@ export const editUser = params => { return axios.get(`${base}/user/edit`, { para
 export const addUser = params => { return axios.get(`${base}/user/add`, { params: params }); };
 
 
-// export const httpPost = (url, params) => {
-//     axios.post(base + url, qs.stringify(params))
-//         .then(res => {
-//             if (res.data.code == 200) {
-//                 return res.data;
-//             } else {
-//                 console.log(res)
-//                 alert(res.data.msg);
-//             }
-//         })
-//         .catch(res => {
-//             console.log(res, '请求失败')
-//         });
-// };
-// export const httpGet = (url,params) => {
-//     return axios.get(base + url+'?'+qs.stringify(params))
-//         .then(res => {
-//             // console.log(13,qs.stringify(params))
-//             if(res.data.code == 200){
-//                 return res.data;
-//             }else{
-//                 console.log(res);
-//                 alert(res.data.msg);
-//             }
-//         })
-//         .catch(res => {
-//             console.log(res,'请求失败')
-//         });
-// };
 const axiosP = axios.create({
     headers: { 'content-type': 'application/x-www-form-urlencoded' }
 });
@@ -54,15 +25,12 @@ export const httpGet = (url, data) => {
     return new Promise((resolve, reject) => {
         axiosP.get(base + url,{params:data})
             .then(res => {
-                console.log(1, res)
-                resolve(() => {
-                    if (res.data.code == 200) {
-                        return res.data;
-                    } else {
-                        console.log(res);
-                        alert(res.data.msg);
-                    }
-                });
+                if (res.data.code == 200) {                        
+                    resolve(res.data);
+                } else {
+                    console.log(res);
+                    alert(res.data.msg);
+                }
             })
             .catch(err => {
                 reject(
@@ -76,15 +44,13 @@ export const httpPost = (url, data) => {
     return new Promise((resolve, reject) => {
         axiosP.post(base + url, qs.stringify(data))
             .then(res => {
-                console.log(1, res)
-                resolve(() => {
-                    if (res.data.code == 200) {
-                        return res.data;
-                    } else {
-                        console.log(res);
-                        alert(res.data.msg);
-                    }
-                });
+                // console.log(1, res)
+                if (res.data.code == 200) {                        
+                    resolve(res.data);
+                } else {
+                    console.log(res);
+                    alert(res.data.msg);
+                }
             })
             .catch(err => {
                 reject(

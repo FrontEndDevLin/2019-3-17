@@ -43,16 +43,16 @@ export default {
             phone: this.ruleForm2.account,
             pwd: this.ruleForm2.checkPass
           };
-          // httpPost("/auth/login", loginParams)
-          //   .then(res => {
-              // console.log(11,res)
+          httpPost("/auth/login", loginParams)
+            .then(res => {
+              console.log(11, res);
               this.logining = false;
-              sessionStorage.setItem("user", JSON.stringify(loginParams));
+              // sessionStorage.setItem("user", JSON.stringify({'a':1,'b':2}));
               this.$router.push({ path: "/" });
-            // })
-            // .catch(() => {
-            //   this.logining = false;
-            // });
+            })
+            .catch(() => {
+              this.logining = false;
+            });
         } else {
           console.log("error submit!!");
           return false;
