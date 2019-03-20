@@ -125,8 +125,8 @@
 
 ## API
 添加价格表项目
-    http://192.168.2.108:4449/cloth/addcommodit
 ```
+    http://192.168.2.108:4449/cloth/addcommodit
     method: get
     param: {
         title: '长袖', // unique
@@ -136,8 +136,8 @@
 ```
 
 登录
-    http://192.168.2.108:4449/auth/login
 ```
+    http://192.168.2.108:4449/auth/login
     method: post
     param: {
         phone: 
@@ -147,15 +147,51 @@
 ```
 
 检查登录
-    http://192.168.2.108:4449/auth/checklogin
 ```
+    http://192.168.2.108:4449/auth/checklogin
     method: post,
     withCredentials: true
 ```
 
 注销
-    http://192.168.2.108:4449/auth/logout
 ```
+    http://192.168.2.108:4449/auth/logout
     method: post,
     withCredentials: true
 ```
+
+个人信息
+```
+    http://192.168.2.108:4449/auth/getselfinfo
+    method: post,
+    withCredentials: true
+```
+
+功能:
+1. 登录/注销
+2. 今日数据统计(echart)
+3. 个人信息(可修改，上传头像)
+4. 历史数据统计(可筛选日期)
+5. 衣服管理
+    添加/移除衣物
+    查看历史衣物
+    价格表(可添加，删除)
+6. 订单管理
+    查看订单(处理订单)
+7. 会员管理
+    会员列表(可添加会员)
+    优惠促销(根据会员积分)
+8. 店铺管理(仅CEO可见)
+    店铺列表(可修改)
+    添加店铺
+8. 员工管理(CEO、店长可见)
+    店长管理(仅CEO可见)
+    员工管理(CEO、店长可见)
+9. 系统管理(CEO、店长可见)
+    全体通知(CEO可见)
+    店铺通知(CEO、店长可见)
+    网站信息(logo, 标题)
+10. 回收站
+    恢复和永久删除
+11. 右上角通知
+    有新通知时, 右上角闪烁

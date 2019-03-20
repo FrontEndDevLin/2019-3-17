@@ -16,6 +16,7 @@ function Auth() {
         if (req.method == "GET") {
             param = qs.parse(query);
         }
+        handle = handle.toLowerCase();
         switch (handle) {
             case 'login': {
                 if (!NS.MethodFilter(req, res, "post")) return;
@@ -100,6 +101,37 @@ function Auth() {
                     data = NS.Build(200, "注销成功3")
                 }
                 NS.Send(res, data);
+            } break;
+            case 'getselfinfo': {
+                if (!NS.MethodFilter(req, res, "get")) return;
+                let cookieParam = NS.GetCookieParam(req);
+                // console.log(cookieParam);
+                if (!cookieParam) {
+                    NS.Send(res, NS.Build(403, "未登录"));
+                    return;
+                }
+                let session_id = cookieParam["session_id"];
+                if (session_id && NS.sessionMap.get(session_id)) {
+                    let userInfo = NS.sessionMap.get(session_id);
+                    userInfo = JSON.parse(JSON.stringify(userInfo));
+                    let uid = userInfo["dc_uid"];
+                    MySQL.GetOne("member", { "_id": uid }, ["gender", "phone", "email", "store", "rgt"], (err, memberInfo) => {
+                        if (err) throw err;
+                        let rspData = null;
+                        if (memberInfo) {
+                            Object.assign(userInfo, memberInfo);
+                            if (userInfo["dc_avatar"]) {
+                                userInfo["dc_avatar"] =  "data:image/jpg;base64," + fs.readFileSync(`./res/${userInfo["dc_avatar"]}`, "base64");
+                            }
+                            rspData = NS.Build(200, "查询成功", userInfo);
+                        } else {
+                            rspData = NS.Build(404, "未知用户");
+                        }
+                        NS.Send(res, rspData);
+                    });
+                } else {
+                    NS.Send(res, NS.Build(403, "未登录"));
+                }
             } break;
             default:
                 break;

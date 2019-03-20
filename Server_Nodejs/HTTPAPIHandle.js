@@ -6,6 +6,7 @@ function HTTPAPIHandle() {
     const url = require("url");
     let Auth = require("./APIAuth");
     let Cloth = require("./APICloth");
+    let Vip = require("./APIVip");
     let ConfParser = require("./ConfigParser");
 
     this.OnParse = function (req, res) {
@@ -24,6 +25,9 @@ function HTTPAPIHandle() {
             } break;
             case "cloth": {
                 Cloth.OnCloth(req, res, handle);
+            } break;
+            case "vip": {
+                Vip.OnVip(req, res, handle);
             } break;
             default:
                 break;

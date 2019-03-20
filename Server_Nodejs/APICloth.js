@@ -38,19 +38,7 @@ function Cloth() {
             default:
                 break;
         }
-        // let query = url.parse(req.url).query;
-        // let param = qs.parse(query);
     }
-}
-
-function GetPostData(req, callback) {
-    let str = "";
-    req.on("data", res => {
-        str += res;
-    });
-    req.on("end", () => {
-        return callback(qs.parse(str.toString()));
-    });
 }
 
 module.exports = new Cloth();

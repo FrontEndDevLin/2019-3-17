@@ -1,5 +1,6 @@
 /**
  * Created by X on 2019/3/19
+ * 存储登录信息
  */
 
 function SessionLinked() {
