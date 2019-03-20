@@ -6,12 +6,28 @@
 			<el-table-column class="status" type="selection" width="55">
 			</el-table-column>
 			<el-table-column class="status" type="index" width="60">
+        <template slot-scope="scope">
+          <span v-if="true" :class="[scope.$index<3?'read':'']">{{ scope.$index }}</span>
+          <!-- <span v-else style="color: #6b6d6e">{{ scope.row.index }}</span> -->
+        </template>
 			</el-table-column>
 			<el-table-column class="status" prop="name" label="标题" width="180" sortable>
+        <template slot-scope="scope">
+          <span v-if="true" :class="[scope.$index<3?'read':'']">{{ scope.row.name }}</span>
+          <!-- <span v-else style="color: #6b6d6e">{{ scope.row.name }}</span> -->
+        </template>
 			</el-table-column>
 			<el-table-column class="status" prop="read" label="状态" width="100" sortable>
+        <template slot-scope="scope">
+          <span v-if="true" :class="[scope.$index<3?'read':'']">{{ scope.row.read }}</span>
+          <!-- <span v-else style="color: #6b6d6e">{{ scope.row.read }}</span> -->
+        </template>
 			</el-table-column>
 			<el-table-column class="status" prop="dec" label="具体内容" min-width="200" sortable>
+        <template slot-scope="scope">
+          <span v-if="true" :class="[scope.$index<3?'read':'']">{{ scope.row.dec }}</span>
+          <!-- <span v-else style="color: #6b6d6e">{{ scope.row.dec }}</span> -->
+        </template>
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template slot-scope="scope">
@@ -281,7 +297,7 @@ export default {
 </script>
 
 <style>
-.el-table .cell{
-  color: #6b6d6e;
+.el-table .cell span.read{
+  color: #888686;
 }
 </style>
