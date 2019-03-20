@@ -85,6 +85,7 @@ export default {
       sysName: "ADMIN",
       collapsed: false,
       sysUserName: "",
+      sysUserId: null,
       sysUserAvatar: "",
       form: {
         name: "",
@@ -105,7 +106,11 @@ export default {
         console.log('checkLog',res)
         if(res.code !== 200){
           sessionStorage.removeItem("user");
-          // this.$router.push("/login");
+          this.$router.push("/login");
+        }else{
+          this.sysUserName = res.data.dc_name;
+          this.sysUserAvatar = res.data.dc_avatar;
+          this.sysUserId = res.data.dc_uid;
         }
       })
       .catch(err => {
@@ -134,7 +139,7 @@ export default {
             console.log('logout',res)
             if(res.code === 200){
               sessionStorage.removeItem("user");
-              _this.$router.push("/login");
+              this.$router.push("/login");
             }
           })
           .catch(err=>{

@@ -24,6 +24,7 @@ import webAll from './views/webAdmin/all.vue'
 import webShop from './views/webAdmin/shop.vue'
 import webAdvertise from './views/webAdmin/advertise.vue'
 import recovery from './views/recovery/recovery.vue'
+import shop from './views/shop/shop.vue'
 
 
 let routes = [
@@ -100,6 +101,16 @@ let routes = [
         children: [
             { path: '/member_list', component: memberList, name: '会员列表' },
             { path: '/member_flash', component: memberFlash, name: '优惠促销' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '',
+        iconCls: 'fa fa-university',
+        leaf: true,//只有一个节点
+        children: [
+            { path: '/shop', component: shop, name: '店铺管理' }
         ]
     },
     {
