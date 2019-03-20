@@ -25,6 +25,7 @@ import webShop from './views/webAdmin/shop.vue'
 import webAdvertise from './views/webAdmin/advertise.vue'
 import recovery from './views/recovery/recovery.vue'
 import shop from './views/shop/shop.vue'
+import notice from './views/notice/notice.vue'
 
 
 let routes = [
@@ -142,6 +143,18 @@ let routes = [
         leaf: true,//只有一个节点
         children: [
             { path: '/recovery', component: recovery, name: '回收站' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '通知',
+        // iconCls: 'fa fa-cubes',
+        hidden: true,
+        children: [
+            { path: '/notice', component: notice, name: '通知' }
+            // { path: '/web_all', component: webAll, name: '全体通知' },
+            // { path: '/web_shop', component: webShop, name: '店铺通知' },
         ]
     },
 
