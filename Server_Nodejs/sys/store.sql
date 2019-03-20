@@ -25,7 +25,7 @@ CREATE Table Store(    # 分店
 
 CREATE Table Vip(  # 会员
     _id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(32) UNIQUE,
+    name VARCHAR(32),
     phone BIGINT NOT NULL UNIQUE,
     gender TINYINT DEFAULT 0,	# 1->male 2->female 
     rgt BIGINT NOT NULL,

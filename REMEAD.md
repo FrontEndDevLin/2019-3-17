@@ -167,6 +167,16 @@
     withCredentials: true
 ```
 
+添加会员
+```
+    http://192.168.2.108:4449/vip/addvip
+    method: post,
+    param: {
+        name: string,
+        phone: number
+    }
+```
+
 功能:
 1. 登录/注销
 2. 今日数据统计(echart)

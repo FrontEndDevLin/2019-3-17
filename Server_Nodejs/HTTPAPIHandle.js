@@ -8,17 +8,31 @@ function HTTPAPIHandle() {
     let Cloth = require("./APICloth");
     let Vip = require("./APIVip");
     let ConfParser = require("./ConfigParser");
+    let NS = require("./NameSpace");
 
     this.OnParse = function (req, res) {
         let path = url.parse(req.url).pathname.toLowerCase();
         let pathArr = path.split("/");
         let router = pathArr[1], handle = pathArr[2];
-        if ( !(router && handle) ) {
+        if (!(router && handle)) {
             return;
         }
-        res.setHeader('Access-Control-Allow-Origin', ConfParser.Parse("cors", "acc-host"));
-        // res.setHeader('Access-Control-Allow-Origin', '*');
+        // res.setHeader('Access-Control-Allow-Origin', ConfParser.Parse("cors", "acc-host"));
+        res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
         res.setHeader('Access-Control-Allow-Credentials', true);
+
+        // 过滤未登录的请求
+        if (!(router == "auth" && (handle == "login" || handle == "checklogin" || handle == "logout"))) {
+            let cookieParams = NS.GetCookieParam(req);
+            if (!cookieParams) {
+                return NS.Send(res, NS.Build(403, "拒绝访问"))
+            }
+            let session_id = cookieParams["session_id"];
+            if (!NS.sessionMap.get(session_id)) {
+                return NS.Send(res, NS.Build(403, "拒绝访问"))
+            }
+        }
+
         switch (router) {
             case "auth": {
                 Auth.OnAuth(req, res, handle);

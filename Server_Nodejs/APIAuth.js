@@ -22,19 +22,21 @@ function Auth() {
                 if (!NS.MethodFilter(req, res, "post")) return;
                 NS.GetPostData(req, function (param) {
                     let phone = param["phone"], pwd = param["pwd"];
-                    MySQL.GetOne("member", { "phone": phone, "pwd": pwd }, ["_id", "name", "level", "avatar"], (err, memberInfo) => {
+                    let sql = `SELECT _id, name, level, avatar FROM member WHERE phone=? and pwd=md5(?)`;
+                    let paramArr = [phone, pwd];
+                    MySQL.Query(sql, paramArr, (err, memberInfo) => {
                         if (err) throw err;
                         let data;
-                        if (memberInfo) {
+                        if (memberInfo && memberInfo[0]) {
                             data = NS.Build(200, "登录成功");
                             let option = {
-                                dc_uid: memberInfo["_id"],
-                                dc_name: memberInfo["name"],
-                                dc_level: memberInfo["level"],
-                                dc_avatar: memberInfo["avatar"]
+                                dc_uid: memberInfo[0]["_id"],
+                                dc_name: memberInfo[0]["name"],
+                                dc_level: memberInfo[0]["level"],
+                                dc_avatar: memberInfo[0]["avatar"]
                             }
                             let session_id = NS.sessionMap.save(option);
-                            res.setHeader('Set-Cookie', `session_id=${session_id};httpOnly=true`);
+                            res.setHeader('Set-Cookie', `session_id=${session_id};httpOnly=true;path=/`);
                             // console.log(NS.sessionMap.get(session_id));
                         } else {
                             data = NS.Build(400, "用户名或密码错误");
@@ -115,11 +117,12 @@ function Auth() {
                     let userInfo = NS.sessionMap.get(session_id);
                     userInfo = JSON.parse(JSON.stringify(userInfo));
                     let uid = userInfo["dc_uid"];
-                    MySQL.GetOne("member", { "_id": uid }, ["gender", "phone", "email", "store", "rgt"], (err, memberInfo) => {
+                    let sql = `SELECT gender, phone, email, store, rgt FROM member WHERE _id=?`
+                    MySQL.Query(sql, [ uid ], (err, memberInfo) => {
                         if (err) throw err;
                         let rspData = null;
-                        if (memberInfo) {
-                            Object.assign(userInfo, memberInfo);
+                        if (memberInfo && memberInfo[0]) {
+                            Object.assign(userInfo, memberInfo[0]);
                             if (userInfo["dc_avatar"]) {
                                 userInfo["dc_avatar"] =  "data:image/jpg;base64," + fs.readFileSync(`./res/${userInfo["dc_avatar"]}`, "base64");
                             }

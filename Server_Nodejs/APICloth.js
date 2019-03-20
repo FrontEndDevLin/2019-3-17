@@ -24,7 +24,7 @@ function Cloth() {
                 let title = param["title"], price = parseInt(param["price"]) || 10, 
                     type = parseInt(param["type"]) || 0;
                 let sql = `INSERT INTO commodit VALUES(NULL, ?, ?, ?, DEFAULT)`;
-                MySQL.GetPool().query(sql, [title, price, type], (err, result) => {
+                MySQL.Query(sql, [title, price, type], (err, result) => {
                     if (err) throw err;
                     let data = {};
                     if (result && result.affectedRows == 1) {

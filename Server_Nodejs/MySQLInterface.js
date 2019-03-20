@@ -21,34 +21,27 @@ function MySQLInterface() {
         return pool;
     }
 
-    this.GetOne = function (tableName, selector, option, callback) {
-        let sql = "SELECT ";
-        let optionString = "";
-        if (option) {
-            for (let opt of option) {
-                opt = optionString ? `, ${opt}` : opt;
-                optionString += opt;
-            }
-        } else {
-            optionString += "*";
-        }
-        sql += `${optionString} FROM ${tableName}`;
-        let selectorString = "", selectorValArr = [];
-        if (selector) {
-            for (let key in selector) {
-                selectorValArr.push(selector[key]);
-                if (key == "pwd") {
-                    key = selectorString ? ` AND ${key} = md5(?)` : ` WHERE ${key} = md5(?)`;
-                } else {
-                    key = selectorString ? ` AND ${key} = ?` : ` WHERE ${key} = ?`;
-                }
-                selectorString += key;
-            }
-        }
-        sql += selectorString;
-        pool.query(sql, selectorValArr, function (err, result) {
+    this.Query = function (sql, paramArr, callback) {
+        pool.query(sql, paramArr, function (err, result) {
+            return callback(err, result);
+        })
+    }
+
+    // 废弃
+    this.GetOne = function (sql, paramArr, callback) {
+        pool.query(sql, paramArr, function (err, result) {
             return callback(err, result[0]);
         })
+    }
+
+    this.GetAll = function (sql, paramArr, callback) {
+        pool.query(sql, paramArr, function (err, result) {
+            return callback(err, result);
+        })
+    }
+
+    this.InsertOne = function (sql, paramArr, callback) {
+
     }
 }
 
