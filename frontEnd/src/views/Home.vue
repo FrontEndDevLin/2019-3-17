@@ -10,17 +10,26 @@
 				</div>
 			</el-col>
       <el-col :span="1" class="bell">
-        <div class="box">
-          <i class="fa fa-bell"></i>
-          <i class="fa fa-circle"></i>
-        </div>
+        <el-dropdown trigger="hover">
+					<span class="el-dropdown-link box">
+            <span class="item">
+              <i class="fa fa-bell"></i>
+              <i class="fa fa-circle"></i>
+            </span>
+          </span>
+					<el-dropdown-menu slot="dropdown">
+						<!-- <el-dropdown-item>我的消息</el-dropdown-item>
+						<el-dropdown-item>设置</el-dropdown-item> -->
+						<el-dropdown-item divided @click.native="logout">通知</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
       </el-col>
 			<el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>我的消息</el-dropdown-item>
-						<el-dropdown-item>设置</el-dropdown-item>
+						<!-- <el-dropdown-item>我的消息</el-dropdown-item>
+						<el-dropdown-item>设置</el-dropdown-item> -->
 						<el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
@@ -192,15 +201,28 @@ export default {
       text-align: left;
       float: right;
       margin-right: 20px;
+      cursor: pointer;
       .box {
-        position: relative;
-        .fa-circle {
-          font-size: 5px;
-          color: red;
-          transform: scale(0.6);
-          position: absolute;
-          top: 17px;
-          right: 31px;
+        display: inline-block;
+        text-align: center;
+        .item{
+          display: inline-block;
+          width: 14px;
+          height: 14px;          
+          position: relative;
+          .fa{
+            position: absolute;
+            &.fa-bell{
+              color: #fff;
+            }
+            &.fa-circle {
+              font-size: 5px;
+              color: red;
+              transform: scale(0.6);
+              top: -7px;
+              right: -11px;
+            }
+          }
         }
       }
     }

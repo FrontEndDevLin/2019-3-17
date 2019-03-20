@@ -99,16 +99,6 @@ export default {
     border: 1px dashed #d9d9d9 !important;
     width: 178px;
     height: 178px;
-    // /deep/ .el-upload {
-    // 	border: 1px dashed #d9d9d9 !important;
-    // 	border-radius: 6px;
-    // 	cursor: pointer;
-    // 	position: relative;
-    // 	overflow: hidden;
-    // 	&:hover {
-    // 		border-color: #409eff;
-    // 	}
-    // }
   }
   .avatar-uploader-icon {
     font-size: 28px;
