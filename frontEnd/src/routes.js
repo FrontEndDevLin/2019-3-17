@@ -20,7 +20,8 @@ import memberList from './views/member/list.vue'
 import memberFlash from './views/member/flash.vue'
 import staffMsg from './views/staff/msg.vue'
 import staffAdd from './views/staff/add.vue'
-import webHandbook from './views/webAdmin/handbook.vue'
+import webAll from './views/webAdmin/all.vue'
+import webShop from './views/webAdmin/shop.vue'
 import webAdvertise from './views/webAdmin/advertise.vue'
 import recovery from './views/recovery/recovery.vue'
 
@@ -118,7 +119,8 @@ let routes = [
         iconCls: 'fa fa-cubes',
         children: [
             { path: '/web_advertise', component: webAdvertise, name: '网站信息' },
-            { path: '/web_handbook', component: webHandbook, name: '员工手册' }
+            { path: '/web_all', component: webAll, name: '全体通知' },
+            { path: '/web_shop', component: webShop, name: '店铺通知' },
         ]
     },
     {

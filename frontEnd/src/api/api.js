@@ -49,6 +49,7 @@ export const httpPost = (url, data) => {
                     resolve(res.data);
                 } else {
                     console.log(res);
+                    resolve(res.data);
                     alert(res.data.msg);
                 }
             })

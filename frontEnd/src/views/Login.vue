@@ -47,7 +47,7 @@ export default {
             .then(res => {
               console.log(11, res);
               this.logining = false;
-              // sessionStorage.setItem("user", JSON.stringify({'a':1,'b':2}));
+              sessionStorage.setItem("user", JSON.stringify({phone: this.ruleForm2.account}));
               this.$router.push({ path: "/" });
             })
             .catch(() => {
