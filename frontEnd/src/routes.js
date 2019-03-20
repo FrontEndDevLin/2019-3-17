@@ -18,8 +18,8 @@ import managePrice from './views/manage/price.vue'
 import orderPage from './views/order/order.vue'
 import memberList from './views/member/list.vue'
 import memberFlash from './views/member/flash.vue'
-import staffMsg from './views/staff/msg.vue'
-import staffAdd from './views/staff/add.vue'
+import staff from './views/staff/staff.vue'
+import shopowner from './views/staff/shopowner.vue'
 import webAll from './views/webAdmin/all.vue'
 import webShop from './views/webAdmin/shop.vue'
 import webAdvertise from './views/webAdmin/advertise.vue'
@@ -119,8 +119,8 @@ let routes = [
         name: '员工管理',
         iconCls: 'fa fa-anchor',
         children: [
-            { path: '/staff_msg', component: staffMsg, name: '展示店长、员工信息' },
-            { path: '/staff_add', component: staffAdd, name: '添加员工' }
+            { path: '/staff_staff', component: staff, name: '管理店长' },
+            { path: '/staff_shopowner', component: shopowner, name: '管理员工' }
         ]
     },
     {

@@ -9,12 +9,13 @@
         <el-form-item label="电话">
 			<el-input v-model="form.tel"></el-input>
 		</el-form-item>
-        <el-form-item label="性别">
-			<el-radio-group v-model="form.sex">
-                <el-radio label="男"></el-radio>
-                <el-radio label="女"></el-radio>
+    <el-form-item label="性别">
+			<el-radio-group v-model="form.gender">
+				<!-- <el-radio checked label="男"></el-radio> -->
+				<el-radio :label="1">男</el-radio>
+				<el-radio :label="0">女</el-radio>
 			</el-radio-group>
-        </el-form-item>
+    </el-form-item>
 		<el-form-item label="头像">
 			<el-upload
 				class="avatar-uploader"
@@ -37,6 +38,7 @@
 </template>
 
 <script>
+import { httpGet } from "../../api/api";
 export default {
   data() {
     return {
@@ -45,12 +47,29 @@ export default {
         email: "",
         tel: "",
         sex: "",
-        desc: ""
+        desc: "",
+        gender: 1
       },
       imageUrl: ""
     };
   },
   methods: {
+    getUser() {
+      console.log(1);
+      httpGet("/auth/getselfinfo")
+        .then(res => {
+          console.log(12, res);
+          this.imageUrl = res.data.dc_avatar;
+          this.form.name = res.data.dc_name;
+          this.form.email = res.data.email;
+          this.form.tel = res.data.phone;
+          this.form.sex = res.data.gender;
+          this.form.desc = res.data.desc;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     onSubmit() {
       console.log("submit!");
     },
@@ -69,42 +88,45 @@ export default {
       }
       return isJPG && isLt2M;
     }
+  },
+  created() {
+    this.getUser();
   }
 };
 </script>
 <style lang="scss" scoped>
-.el-form-item{
-	.avatar-uploader{ 
-		border: 1px dashed #d9d9d9 !important;
-		width: 178px;
-    	height: 178px;
-		// /deep/ .el-upload {
-		// 	border: 1px dashed #d9d9d9 !important;
-		// 	border-radius: 6px;
-		// 	cursor: pointer;
-		// 	position: relative;
-		// 	overflow: hidden;
-		// 	&:hover {
-		// 		border-color: #409eff;
-		// 	}
-		// }
-	}
-	.avatar-uploader-icon {
-	font-size: 28px;
-	color: #8c939d;
-	width: 178px;
-	height: 178px;
-	line-height: 178px;
-	text-align: center;
-	}
-	.avatar {
-	width: 178px;
-	height: 178px;
-	display: block;
-	}
-	.el-button--primary {
-	display: block;
-	margin: 0 auto;
-	}
+.el-form-item {
+  .avatar-uploader {
+    border: 1px dashed #d9d9d9 !important;
+    width: 178px;
+    height: 178px;
+    // /deep/ .el-upload {
+    // 	border: 1px dashed #d9d9d9 !important;
+    // 	border-radius: 6px;
+    // 	cursor: pointer;
+    // 	position: relative;
+    // 	overflow: hidden;
+    // 	&:hover {
+    // 		border-color: #409eff;
+    // 	}
+    // }
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+  .el-button--primary {
+    display: block;
+    margin: 0 auto;
+  }
 }
 </style>
