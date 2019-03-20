@@ -10,7 +10,7 @@
 			<el-input v-model="form.tel"></el-input>
 		</el-form-item>
     <el-form-item label="性别">
-			<el-radio-group v-model="form.gender">
+			<el-radio-group v-model="form.sex">
 				<!-- <el-radio checked label="男"></el-radio> -->
 				<el-radio :label="1">男</el-radio>
 				<el-radio :label="0">女</el-radio>
@@ -47,8 +47,7 @@ export default {
         email: "",
         tel: "",
         sex: "",
-        desc: "",
-        gender: 1
+        desc: ""
       },
       imageUrl: ""
     };
