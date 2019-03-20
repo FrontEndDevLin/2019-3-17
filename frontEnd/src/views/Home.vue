@@ -4,11 +4,17 @@
 			<el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
 				{{collapsed?'':sysName}}
 			</el-col>
-			<el-col :span="10">
+			<el-col :span="9">
 				<div class="tools" @click.prevent="collapse">
 					<i class="fa fa-align-justify"></i>
 				</div>
 			</el-col>
+      <el-col :span="1" class="bell">
+        <div class="box">
+          <i class="fa fa-bell"></i>
+          <i class="fa fa-circle"></i>
+        </div>
+      </el-col>
 			<el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
@@ -72,12 +78,14 @@
 </template>
 
 <script>
+import {httpPost} from '../api/api';
 export default {
   data() {
     return {
       sysName: "ADMIN",
       collapsed: false,
       sysUserName: "",
+      sysUserId: null,
       sysUserAvatar: "",
       form: {
         name: "",
@@ -92,6 +100,23 @@ export default {
     };
   },
   methods: {
+    checkLog() {
+      httpPost('/auth/checklogin')
+      .then((res)=>{
+        console.log('checkLog',res)
+        if(res.code !== 200){
+          sessionStorage.removeItem("user");
+          this.$router.push("/login");
+        }else{
+          this.sysUserName = res.data.dc_name;
+          this.sysUserAvatar = res.data.dc_avatar;
+          this.sysUserId = res.data.dc_uid;
+        }
+      })
+      .catch(err => {
+        console.log('err',err)
+      });
+    },
     onSubmit() {
       console.log("submit!");
     },
@@ -109,8 +134,18 @@ export default {
         //type: 'warning'
       })
         .then(() => {
-          sessionStorage.removeItem("user");
-          _this.$router.push("/login");
+          httpPost('/auth/logout')
+          .then(res=>{
+            console.log('logout',res)
+            if(res.code === 200){
+              sessionStorage.removeItem("user");
+              this.$router.push("/login");
+            }
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+          
         })
         .catch(() => {});
     },
@@ -122,10 +157,14 @@ export default {
       this.$refs.menuCollapsed.getElementsByClassName(
         "submenu-hook-" + i
       )[0].style.display = status ? "block" : "none";
-    }
+    },
+
+  },
+  created() {
+    this.checkLog();
   },
   mounted() {
-	  console.log(this.$router.options.routes)
+    // console.log(this.$router.options.routes);
     var user = sessionStorage.getItem("user");
     if (user) {
       user = JSON.parse(user);
@@ -149,6 +188,22 @@ export default {
     line-height: 60px;
     background: $color-primary;
     color: #fff;
+    .bell {
+      text-align: left;
+      float: right;
+      margin-right: 20px;
+      .box {
+        position: relative;
+        .fa-circle {
+          font-size: 5px;
+          color: red;
+          transform: scale(0.6);
+          position: absolute;
+          top: 17px;
+          right: 31px;
+        }
+      }
+    }
     .userinfo {
       text-align: right;
       padding-right: 35px;
@@ -212,11 +267,11 @@ export default {
       // bottom: 0px;
       .el-menu {
         height: 100%;
-		    width: unset !important;
-        .el-submenu{
-           .el-menu-item{
-             min-width: unset; 
-           }
+        width: unset !important;
+        .el-submenu {
+          .el-menu-item {
+            min-width: unset;
+          }
         }
       }
       .collapsed {

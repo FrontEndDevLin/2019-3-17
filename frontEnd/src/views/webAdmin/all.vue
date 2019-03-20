@@ -2,7 +2,7 @@
 	<section>
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-			员工手册
+			全体员工通知
 		</el-col>
 	</section>
 </template>

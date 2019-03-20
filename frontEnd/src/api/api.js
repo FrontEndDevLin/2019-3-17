@@ -19,7 +19,8 @@ export const addUser = params => { return axios.get(`${base}/user/add`, { params
 
 
 const axiosP = axios.create({
-    headers: { 'content-type': 'application/x-www-form-urlencoded' }
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    withCredentials: true
 });
 export const httpGet = (url, data) => {
     return new Promise((resolve, reject) => {
@@ -49,6 +50,7 @@ export const httpPost = (url, data) => {
                     resolve(res.data);
                 } else {
                     console.log(res);
+                    resolve(res.data);
                     alert(res.data.msg);
                 }
             })

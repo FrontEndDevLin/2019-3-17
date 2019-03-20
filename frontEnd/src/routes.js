@@ -20,9 +20,11 @@ import memberList from './views/member/list.vue'
 import memberFlash from './views/member/flash.vue'
 import staffMsg from './views/staff/msg.vue'
 import staffAdd from './views/staff/add.vue'
-import webHandbook from './views/webAdmin/handbook.vue'
+import webAll from './views/webAdmin/all.vue'
+import webShop from './views/webAdmin/shop.vue'
 import webAdvertise from './views/webAdmin/advertise.vue'
 import recovery from './views/recovery/recovery.vue'
+import shop from './views/shop/shop.vue'
 
 
 let routes = [
@@ -104,6 +106,16 @@ let routes = [
     {
         path: '/',
         component: Home,
+        name: '',
+        iconCls: 'fa fa-university',
+        leaf: true,//只有一个节点
+        children: [
+            { path: '/shop', component: shop, name: '店铺管理' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
         name: '员工管理',
         iconCls: 'fa fa-anchor',
         children: [
@@ -118,7 +130,8 @@ let routes = [
         iconCls: 'fa fa-cubes',
         children: [
             { path: '/web_advertise', component: webAdvertise, name: '网站信息' },
-            { path: '/web_handbook', component: webHandbook, name: '员工手册' }
+            { path: '/web_all', component: webAll, name: '全体通知' },
+            { path: '/web_shop', component: webShop, name: '店铺通知' },
         ]
     },
     {

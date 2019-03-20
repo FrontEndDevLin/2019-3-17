@@ -21,19 +21,17 @@
 			</el-table-column>
 			<el-table-column type="index" width="60">
 			</el-table-column>
-			<el-table-column prop="name" label="名称" width="120" sortable>
+			<el-table-column prop="name" label="店铺名称" width="120" sortable>
 			</el-table-column>
-			<el-table-column prop="price" label="价格" width="100" sortable>
+			<el-table-column prop="price" label="编号" width="100" sortable>
 			</el-table-column>
-			<el-table-column prop="num" label="数量" width="100" sortable>
+			<el-table-column prop="time" label="开店日期" width="120" sortable>
 			</el-table-column>
-			<el-table-column prop="time" label="有效时间" width="120" sortable>
-			</el-table-column>
-			<el-table-column prop="dec" label="备注" min-width="180" sortable>
+			<el-table-column prop="dec" label="地址" min-width="180" sortable>
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template slot-scope="scope">
-					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">恢复</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -49,19 +47,16 @@
 		<!--编辑界面-->
 		<el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
 			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-				<el-form-item label="名称" prop="name">
+				<el-form-item label="店铺名称" prop="name">
 					<el-input v-model="editForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="价格">
+				<el-form-item label="编号">
 					<el-input-number v-model="editForm.price" :min="0" :max="200"></el-input-number>
 				</el-form-item>
-				<el-form-item label="数量">
-					<el-input-number v-model="editForm.num" :min="0" :max="200"></el-input-number>
-				</el-form-item>
-				<el-form-item label="有效时间">
+				<el-form-item label="开店日期">
 					<el-date-picker type="date" placeholder="选择日期" v-model="editForm.time"></el-date-picker>
 				</el-form-item>
-				<el-form-item label="备注">
+				<el-form-item label="地址">
 					<el-input type="textarea" v-model="editForm.dec"></el-input>
 				</el-form-item>
 			</el-form>
@@ -74,19 +69,16 @@
 		<!--新增界面-->
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-				<el-form-item label="名称" prop="name">
+				<el-form-item label="店铺名称" prop="name">
 					<el-input v-model="addForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="价格">
+				<el-form-item label="编号">
 					<el-input-number v-model="editForm.price" :min="0" :max="200"></el-input-number>
 				</el-form-item>
-				<el-form-item label="数量">
-					<el-input-number v-model="editForm.num" :min="0" :max="200"></el-input-number>
-				</el-form-item>
-				<el-form-item label="有效时间">
+				<el-form-item label="开店日期">
 					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.time"></el-date-picker>
 				</el-form-item>
-				<el-form-item label="备注">
+				<el-form-item label="地址">
 					<el-input type="textarea" v-model="addForm.dec"></el-input>
 				</el-form-item>
 			</el-form>
@@ -131,8 +123,7 @@ export default {
       editForm: {
         id: 0,
         name: "",
-		price: 0,
-		num: 0,
+        price: 0,
         time: "",
         dec: ""
       },
@@ -146,7 +137,6 @@ export default {
       addForm: {
         name: "",
         price: 0,
-		num: 0,
         time: "",
         dec: ""
       }
@@ -185,9 +175,9 @@ export default {
           Mock.mock({
             id: Mock.Random.guid(),
             price: 1,
-            name: '裙子',
-			num: 0,
-            dec: '干净',
+            name: Mock.Random.cname(),
+            dec: Mock.mock("@county(true)"),
+            "age|18-60": 1,
             time: Mock.Random.date(),
             sex: Mock.Random.integer(0, 1)
           })
