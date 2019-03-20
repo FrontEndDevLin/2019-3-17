@@ -10,22 +10,46 @@
 				</div>
 			</el-col>
       <el-col :span="1" class="bell">
-        <div class="box">
-          <i class="fa fa-bell"></i>
-          <i class="fa fa-circle"></i>
-        </div>
+        <el-dropdown trigger="hover">
+					<span class="el-dropdown-link box">
+            <span class="item">
+              <i class="fa fa-bell"></i>
+              <i class="fa fa-circle"></i>
+            </span>
+          </span>
+					<el-dropdown-menu slot="dropdown">
+						<!-- <el-dropdown-item>我的消息</el-dropdown-item>
+						<el-dropdown-item>设置</el-dropdown-item> -->
+						<el-dropdown-item divided @click.native="$router.push('/notice')">通知</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
       </el-col>
 			<el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>我的消息</el-dropdown-item>
-						<el-dropdown-item>设置</el-dropdown-item>
+						<!-- <el-dropdown-item>我的消息</el-dropdown-item>
+						<el-dropdown-item>设置</el-dropdown-item> -->
 						<el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</el-col>
 		</el-col>
+
+    <!-- <el-dialog title="通知" v-model="dioalogVisible" :close-on-click-modal="false">
+			<el-form :model="dialogForm" label-width="80px" :rules="dialogFormRules" ref="dialogForm">
+				<el-form-item label="标题" prop="name">
+				</el-form-item>
+				<el-form-item label="价格">
+					这里是通知的具体信息……
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="dialogFormVisible = false">取消</el-button>
+				<el-button type="primary" @click.native="dialogSubmit" :loading="dialogLoading">提交</el-button>
+			</div>
+		</el-dialog> -->
+
 		<el-col :span="24" class="main">
 			<aside :class="collapsed?'menu-collapsed':'menu-expanded'">
 				<!--导航菜单-->
@@ -96,7 +120,15 @@ export default {
         type: [],
         resource: "",
         desc: ""
-      }
+      },
+      dioalogVisible: false,
+      dialogForm: {
+        id: 0,
+        name: "",
+        price: 0,
+        time: "",
+        dec: ""
+      },
     };
   },
   methods: {
@@ -192,15 +224,28 @@ export default {
       text-align: left;
       float: right;
       margin-right: 20px;
+      cursor: pointer;
       .box {
-        position: relative;
-        .fa-circle {
-          font-size: 5px;
-          color: red;
-          transform: scale(0.6);
-          position: absolute;
-          top: 17px;
-          right: 31px;
+        display: inline-block;
+        text-align: center;
+        .item{
+          display: inline-block;
+          width: 14px;
+          height: 14px;          
+          position: relative;
+          .fa{
+            position: absolute;
+            &.fa-bell{
+              color: #fff;
+            }
+            &.fa-circle {
+              font-size: 5px;
+              color: red;
+              transform: scale(0.6);
+              top: -7px;
+              right: -11px;
+            }
+          }
         }
       }
     }

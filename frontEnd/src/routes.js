@@ -18,13 +18,14 @@ import managePrice from './views/manage/price.vue'
 import orderPage from './views/order/order.vue'
 import memberList from './views/member/list.vue'
 import memberFlash from './views/member/flash.vue'
-import staffMsg from './views/staff/msg.vue'
-import staffAdd from './views/staff/add.vue'
+import staff from './views/staff/staff.vue'
+import shopowner from './views/staff/shopowner.vue'
 import webAll from './views/webAdmin/all.vue'
 import webShop from './views/webAdmin/shop.vue'
 import webAdvertise from './views/webAdmin/advertise.vue'
 import recovery from './views/recovery/recovery.vue'
 import shop from './views/shop/shop.vue'
+import notice from './views/notice/notice.vue'
 
 
 let routes = [
@@ -119,8 +120,8 @@ let routes = [
         name: '员工管理',
         iconCls: 'fa fa-anchor',
         children: [
-            { path: '/staff_msg', component: staffMsg, name: '展示店长、员工信息' },
-            { path: '/staff_add', component: staffAdd, name: '添加员工' }
+            { path: '/staff_staff', component: staff, name: '管理店长' },
+            { path: '/staff_shopowner', component: shopowner, name: '管理员工' }
         ]
     },
     {
@@ -142,6 +143,18 @@ let routes = [
         leaf: true,//只有一个节点
         children: [
             { path: '/recovery', component: recovery, name: '回收站' }
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '通知',
+        // iconCls: 'fa fa-cubes',
+        hidden: true,
+        children: [
+            { path: '/notice', component: notice, name: '通知' }
+            // { path: '/web_all', component: webAll, name: '全体通知' },
+            // { path: '/web_shop', component: webShop, name: '店铺通知' },
         ]
     },
 

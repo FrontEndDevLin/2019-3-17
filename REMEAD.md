@@ -163,7 +163,7 @@
 个人信息
 ```
     http://192.168.2.108:4449/auth/getselfinfo
-    method: post,
+    method: get,
     withCredentials: true
 ```
 
