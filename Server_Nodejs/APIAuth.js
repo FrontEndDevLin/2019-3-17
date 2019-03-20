@@ -117,7 +117,7 @@ function Auth() {
                     let userInfo = NS.sessionMap.get(session_id);
                     userInfo = JSON.parse(JSON.stringify(userInfo));
                     let uid = userInfo["dc_uid"];
-                    let sql = `SELECT gender, phone, email, store, rgt FROM member WHERE _id=?`
+                    let sql = `SELECT gender, phone, email, store, intro, rgt FROM member WHERE _id=?`
                     MySQL.Query(sql, [ uid ], (err, memberInfo) => {
                         if (err) throw err;
                         let rspData = null;

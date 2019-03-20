@@ -14,6 +14,7 @@ CREATE Table Member(   # 成员
     avatar VARCHAR(256) NOT NULL,
     store TINYINT NOT NULL,
     rgt BIGINT NOT NULL,
+    intro VARCHAR(512) DEFAULT '',
     del TINYINT DEFAULT 1
 );
 
@@ -77,4 +78,4 @@ CREATE Table Config(
     page404 VARCHAR(256)
 );
 
-INSERT INTO Member VALUES(null, "CEO", 1, 13622222222, DEFAULT, 99, md5("123abc"), "avatar/default/default_003.jpg", 0, 1552902178513, DEFAULT);
+INSERT INTO Member VALUES(null, "CEO", 1, 13622222222, DEFAULT, 99, md5("123abc"), "avatar/default/default_003.jpg", 0, 1552902178513, DEFAULT, DEFAULT);
