@@ -46,9 +46,17 @@ export default {
           httpPost("/auth/login", loginParams)
             .then(res => {
               console.log(11, res);
-              this.logining = false;
-              sessionStorage.setItem("user", JSON.stringify({phone: this.ruleForm2.account}));
-              this.$router.push({ path: "/" });
+              if(res.code == 200){
+                this.logining = false;
+                sessionStorage.setItem("user", JSON.stringify({phone: this.ruleForm2.account}));
+                this.$router.push({ path: "/" });
+              }else{
+                this.$message({
+                  message: res.msg,
+                  type: "warning"
+                })
+                this.logining = false;
+              }
             })
             .catch(() => {
               this.logining = false;

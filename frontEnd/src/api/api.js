@@ -26,12 +26,12 @@ export const httpGet = (url, data) => {
     return new Promise((resolve, reject) => {
         axiosP.get(base + url, { params: data })
             .then(res => {
-                if (res.data.code == 200) {
+                // if (res.data.code == 200) {
                     resolve(res.data);
-                } else {
-                    console.log(res);
-                    alert(res.data.msg);
-                }
+                // } else {
+                //     console.log(res);
+                //     alert(res.data.msg);
+                // }
             })
             .catch(err => {
                 reject(
@@ -46,13 +46,13 @@ export const httpPost = (url, data) => {
         axiosP.post(base + url, qs.stringify(data))
             .then(res => {
                 // console.log(1, res)
-                if (res.data.code == 200) {
+                // if (res.data.code == 200) {
                     resolve(res.data);
-                } else {
-                    console.log(res);
-                    resolve(res.data);
-                    alert(res.data.msg);
-                }
+                // } else {
+                //     console.log(res);
+                //     resolve(res.data);
+                //     alert(res.data.msg);
+                // }
             })
             .catch(err => {
                 reject(

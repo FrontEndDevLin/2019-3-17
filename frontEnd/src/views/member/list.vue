@@ -29,27 +29,25 @@
 
 		<!--列表-->
 		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-			<el-table-column type="id" width="0">
+			<el-table-column type="vid" width="0">
 			</el-table-column>
 			<el-table-column type="index" width="80">
 			</el-table-column>
-			<el-table-column prop="name" label="会员名称" width="120">
+			<el-table-column prop="newName" label="会员名称" width="120">
 			</el-table-column>
-			<el-table-column prop="phone" label="电话" width="140">
+			<el-table-column prop="newPhone" label="电话" width="140">
 			</el-table-column>
 			<el-table-column prop="count" label="积分" width="100">
 			</el-table-column>
-			<el-table-column prop="sex" label="性别" width="100">
+			<el-table-column prop="newGender" label="性别" width="100">
         <template slot-scope="scope">
-					<span>{{scope.row.sex==0?'女':'男'}}</span>
+					<span>{{scope.row.newGender==2?'女':scope.row.newGender==1?'男':'未知'}}</span>
 				</template>
 			</el-table-column>
 			<el-table-column prop="time" label="注册时间" width="140">
         <template slot-scope="scope">
           <span>{{new Date(parseInt(scope.row.time)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
         </template>
-			</el-table-column>
-			<el-table-column prop="dec" label="备注" min-width="140">
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template slot-scope="scope">
@@ -69,22 +67,16 @@
 		<el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
 			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
 				<el-form-item label="会员名称" prop="name">
-					<el-input v-model="editForm.name" auto-complete="off"></el-input>
+					<el-input v-model="editForm.newName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="电话" prop="phone">
-					<el-input v-model="editForm.phone"></el-input>
+					<el-input v-model="editForm.newPhone"></el-input>
 				</el-form-item>
 				<el-form-item label="性别">
-					<el-radio-group v-model="editForm.sex">
+					<el-radio-group v-model="editForm.newGender">
 						<el-radio class="radio" :label="1">男</el-radio>
-						<el-radio class="radio" :label="0">女</el-radio>
+						<el-radio class="radio" :label="2">女</el-radio>
 					</el-radio-group>
-				</el-form-item>
-				<!-- <el-form-item label="注册时间">
-					<el-date-picker type="date" placeholder="选择日期" v-model="editForm.time"></el-date-picker>
-				</el-form-item> -->
-				<el-form-item label="备注">
-					<el-input type="textarea" v-model="editForm.dec"></el-input>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -102,18 +94,12 @@
 				<el-form-item label="电话" prop="phone">
 					<el-input v-model="addForm.phone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="性别">
+				<!-- <el-form-item label="性别">
 					<el-radio-group v-model="addForm.sex">
 						<el-radio class="radio" :label="1">男</el-radio>
-						<el-radio class="radio" :label="0">女</el-radio>
+						<el-radio class="radio" :label="2">女</el-radio>
 					</el-radio-group>
-				</el-form-item>
-				<!-- <el-form-item label="注册时间">
-					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.time"></el-date-picker>
 				</el-form-item> -->
-				<el-form-item label="备注">
-					<el-input type="textarea" v-model="addForm.dec"></el-input>
-				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="addFormVisible = false">取消</el-button>
@@ -151,17 +137,22 @@ export default {
       editFormVisible: false, //编辑界面是否显示
       editLoading: false,
       editFormRules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        phone: [{ required: true,pattern: /^1\d{10}$/, message: "手机号格式不正确", trigger: "blur" }]
+        newName: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        newPhone: [
+          {
+            required: true,
+            pattern: /^1\d{10}$/,
+            message: "手机号格式不正确",
+            trigger: "blur"
+          }
+        ]
       },
       //编辑界面数据
       editForm: {
-        id: 0,
-        name: "",
-        phone: 0,
-        sex: 0,
-        time: "",
-        dec: ""
+        vid: 0,
+        newName: "",
+        newPhone: 0,
+        newGender: 0
       },
 
       addFormVisible: false, //新增界面是否显示
@@ -182,24 +173,22 @@ export default {
         name: "",
         phone: "",
         sex: 1,
-        time: "",
-        dec: ""
+        time: ""
       },
       page: 1,
       countDown: false,
       dateDown: false,
-      currentFiled: 'rgt',
-      currentSort: -1,
-
+      currentFiled: "rgt",
+      currentSort: -1
     };
   },
   methods: {
     handleCurrentChange(val) {
       this.page = val;
-      this.getUsers(this.page,this.currentFiled,this.currentSort);
+      this.getUsers(this.page, this.currentFiled, this.currentSort);
     },
     //获取用户列表
-    getUsers(page,field,sort) {
+    getUsers(page, field, sort) {
       let param = {
         pno: page, // 当前页码 不传的话默认1
         field: field, // 排序字段 有 'rgt'和'count'(注册时间，积分) 两种选择 不传默认为'rgt'
@@ -208,20 +197,25 @@ export default {
       httpGet("/vip/getviplist", param)
         .then(res => {
           this.listLoading = false;
-          console.log("res get", res);
-          this.total = res.data.vipCount;
-          this.listLoading = false;
-          this.users = [];
-          for (let i = 0; i < res.data.items.length; i++) {
-            this.users.push({
-              id: res.data.items[i]._id,
-              phone: res.data.items[i].phone ,
-              name: res.data.items[i].name ,
-              email: res.data.items[i].email ,
-              dec: res.data.items[i].dec ,
-              time: res.data.items[i].rgt ,
-              sex: res.data.items[i].gender,
-              count: res.data.items[i].count
+          if (res.code == 200) {
+            console.log("res get", res);
+            this.total = res.data.vipCount;
+            this.users = [];
+            for (let i = 0; i < res.data.items.length; i++) {
+              this.users.push({
+                vid: res.data.items[i]._id,
+                newPhone: res.data.items[i].phone,
+                newName: res.data.items[i].name,
+                email: res.data.items[i].email,
+                time: res.data.items[i].rgt,
+                newGender: res.data.items[i].gender,
+                count: res.data.items[i].count
+              });
+            }
+          } else {
+            this.$message({
+              message: res.msg,
+              type: "warning"
             });
           }
         })
@@ -237,16 +231,22 @@ export default {
       })
         .then(() => {
           this.listLoading = true;
-          let para = { vid: row.id };
-          httpPost('/vip/delvip',para).then(res => {
-            console.log(res)
-            if(res.code == 200){
-              this.listLoading = false;
+          let para = { vid: row.vid };
+          // console.log(para)
+          httpPost("/vip/delvip", para).then(res => {
+            console.log(res);
+            this.listLoading = false;
+            if (res.code == 200) {
               this.$message({
                 message: "删除成功",
                 type: "success"
               });
-              this.getUsers(this.page,this.currentFiled,this.currentSort);
+              this.getUsers(this.page, this.currentFiled, this.currentSort);
+            } else {
+              this.$message({
+                message: res.msg,
+                type: "warning"
+              });
             }
           });
         })
@@ -266,20 +266,24 @@ export default {
             this.editLoading = true;
 
             let para = Object.assign({}, this.editForm);
-            para.time =
-              !para.time || para.time == ""
-                ? ""
-                : util.formatDate.format(new Date(para.time), "yyyy-MM-dd");
-            editUser(para).then(res => {
+            console.log(para);
+            httpPost("/vip/editvip", para).then(res => {
+              console.log("edit", res);
               this.editLoading = false;
-
-              this.$message({
-                message: "提交成功",
-                type: "success"
-              });
-              this.$refs["editForm"].resetFields();
-              this.editFormVisible = false;
-              this.getUsers(this.page,this.currentFiled,this.currentSort);
+              if (res.code == 200) {
+                this.$message({
+                  message: res.msg,
+                  type: "success"
+                });
+                this.$refs["editForm"].resetFields();
+                this.editFormVisible = false;
+                this.getUsers(this.page, this.currentFiled, this.currentSort);
+              } else {
+                this.$message({
+                  message: res.msg,
+                  type: "warning"
+                });
+              }
             });
           });
         }
@@ -289,37 +293,27 @@ export default {
     addSubmit() {
       this.$refs.addForm.validate(valid => {
         if (valid) {
-          console.log(this.addForm);
+          console.log("addForm", this.addForm);
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.addLoading = true;
-
-            // let para = Object.assign({}, this.addForm);
-            // para.time =
-            //   !para.time || para.time == ""
-            //     ? ""
-            //     : util.formatDate.format(new Date(para.time), "yyyy-MM-dd");
-            // addUser(para).then(res => {
-            //   this.addLoading = false;
-            //
-            //   this.$message({
-            //     message: "提交成功",
-            //     type: "success"
-            //   });
-            //   this.$refs["addForm"].resetFields();
-            //   this.addFormVisible = false;
-            //   this.getUsers();
-            // });
             httpPost("/vip/addvip", this.addForm)
               .then(res => {
                 this.addFormVisible = false;
                 this.addLoading = false;
-                console.log(33, res);
-                this.$message({
-                  message: "提交成功",
-                  type: "success"
-                });
-                this.$refs["addForm"].resetFields();
-                this.getUsers(this.page,this.currentFiled,this.currentSort);
+                if (res.code == 200) {
+                  console.log(33, res);
+                  this.$message({
+                    message: "提交成功",
+                    type: "success"
+                  });
+                  this.$refs["addForm"].resetFields();
+                  this.getUsers(this.page, this.currentFiled, this.currentSort);
+                } else {
+                  this.$message({
+                    message: res.msg,
+                    type: "warning"
+                  });
+                }
               })
               .catch(err => {
                 this.addLoading = false;
@@ -333,7 +327,7 @@ export default {
     selsChange(sels) {
       this.sels = sels;
     },
-    sortByDate(){
+    sortByDate() {
       // let param = {
       //   pno: page, // 当前页码 不传的话默认1
       //   field: field, // 排序字段 有 'rgt'和'count'(注册时间，积分) 两种选择 不传默认为'rgt'
@@ -341,41 +335,41 @@ export default {
       // };
       this.dateDown = !this.dateDown;
       // console.log(this.dateDown)
-      this.currentFiled = 'rgt';
-      if(!this.dateDown){
+      this.currentFiled = "rgt";
+      if (!this.dateDown) {
         // down
         this.currentSort = -1;
-        this.getUsers(this.page,'rgt',-1);
-      }else{
+        this.getUsers(this.page, "rgt", -1);
+      } else {
         this.currentSort = 1;
-        this.getUsers(this.page,'rgt',1);
+        this.getUsers(this.page, "rgt", 1);
       }
     },
-    sortByCount(){
+    sortByCount() {
       this.countDown = !this.countDown;
-      console.log(this.countDown)
-      this.currentFiled = 'count';
-      if(!this.countDown){
+      console.log(this.countDown);
+      this.currentFiled = "count";
+      if (!this.countDown) {
         // down
         this.currentSort = -1;
-        this.getUsers(this.page,'count',-1);
-      }else{
+        this.getUsers(this.page, "count", -1);
+      } else {
         this.currentSort = 1;
-        this.getUsers(this.page,'count',1);
+        this.getUsers(this.page, "count", 1);
       }
     }
   },
   created() {
-    this.getUsers(this.page,'rgt',-1);
+    this.getUsers(this.page, "rgt", -1);
   }
 };
 </script>
 
 <style scoped>
-.count{
+.count {
   cursor: pointer;
 }
-.date{
+.date {
   cursor: pointer;
 }
 </style>
