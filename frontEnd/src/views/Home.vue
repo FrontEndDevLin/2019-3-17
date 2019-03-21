@@ -55,13 +55,21 @@
 				<!--导航菜单-->
 				<el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect"
 					 unique-opened router v-show="!collapsed">
-					<template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
-						<el-submenu :index="index+''" v-if="!item.leaf">
-							<template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
-							<el-menu-item v-for="child in item.children" :index="child.path" :key="child.path" v-if="!child.hidden">{{child.name}}</el-menu-item>
-						</el-submenu>
-						<el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path"><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
-					</template>
+          <template v-for="(item,index) in $router.options.routes" v-if="!item.hidden">
+            <!-- <div v-if="item.staff&&level>0"> -->
+              <el-submenu :index="index+''" v-if="!item.leaf&&!item.staff">
+                <template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
+                <el-menu-item v-for="child in item.children" :index="child.path" :key="child.path" v-if="!child.hidden">{{child.name}}</el-menu-item>
+              </el-submenu>
+
+              <el-submenu :index="item.children[0].path" v-if="item.staff && (level>0)">
+                <template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
+                <el-menu-item v-for="child in item.children" :index="child.path" :key="child.path" v-if="!child.hidden">{{child.name}}</el-menu-item>
+              </el-submenu>
+
+              <el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path"><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
+            <!-- </div> -->
+          </template>
 				</el-menu>
 				<!--导航菜单-折叠后-->
 				<ul class="el-menu el-menu-vertical-demo collapsed" v-show="collapsed" ref="menuCollapsed">
@@ -129,6 +137,7 @@ export default {
         time: "",
         dec: ""
       },
+      level: 0,//99-ceo,9-店长,0-员工
     };
   },
   methods: {
@@ -143,6 +152,7 @@ export default {
           this.sysUserName = res.data.dc_name;
           this.sysUserAvatar = res.data.dc_avatar;
           this.sysUserId = res.data.dc_uid;
+          this.level = res.dara.dc_level;
         }
       })
       .catch(err => {

@@ -119,6 +119,7 @@ let routes = [
         component: Home,
         name: '员工管理',
         iconCls: 'fa fa-anchor',
+        staff: true,
         children: [
             { path: '/staff_staff', component: staff, name: '管理店长' },
             { path: '/staff_shopowner', component: shopowner, name: '管理员工' }

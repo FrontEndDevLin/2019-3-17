@@ -264,19 +264,18 @@ export default {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.editLoading = true;
-
             let para = Object.assign({}, this.editForm);
             console.log(para);
             httpPost("/vip/editvip", para).then(res => {
               console.log("edit", res);
               this.editLoading = false;
+              this.editFormVisible = false;
               if (res.code == 200) {
                 this.$message({
                   message: res.msg,
                   type: "success"
                 });
                 this.$refs["editForm"].resetFields();
-                this.editFormVisible = false;
                 this.getUsers(this.page, this.currentFiled, this.currentSort);
               } else {
                 this.$message({
