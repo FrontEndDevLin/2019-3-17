@@ -3,43 +3,53 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
-				<el-form-item>
+				<!-- <el-form-item>
 					<el-input v-model="filters.name" placeholder="姓名"></el-input>
-				</el-form-item>
-				<el-form-item>
+				</el-form-item> -->
+				<!-- <el-form-item>
 					<el-button type="primary" v-on:click="getUsers">查询</el-button>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item>
 					<el-button type="primary" @click="addFormVisible = true">新增</el-button>
 				</el-form-item>
+        <el-form-item>
+          <span class="count" @click="sortByCount">
+            积分排序
+            <i :class="['fa',!countDown?'fa-sort-desc':'fa-sort-asc']"></i>
+          </span>
+        </el-form-item>
+        <el-form-item>
+          <span class="date" @click="sortByDate">
+            注册时间排序
+            <i :class="['fa',!dateDown?'fa-sort-desc':'fa-sort-asc']"></i>
+          </span>
+        </el-form-item>
 			</el-form>
 		</el-col>
 
 		<!--列表-->
 		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-			<el-table-column type="selection" width="55">
+			<el-table-column type="id" width="0">
 			</el-table-column>
-			<el-table-column type="index" width="60">
+			<el-table-column type="index" width="80">
 			</el-table-column>
-			<el-table-column prop="name" label="会员名称" width="120" sortable>
+			<el-table-column prop="name" label="会员名称" width="120">
 			</el-table-column>
-			<el-table-column prop="phone" label="电话" width="100" sortable>
+			<el-table-column prop="phone" label="电话" width="140">
 			</el-table-column>
-			<el-table-column prop="email" label="邮箱" width="100" sortable>
+			<el-table-column prop="count" label="积分" width="100">
 			</el-table-column>
-			<el-table-column prop="count" label="积分" width="100" sortable>
-			</el-table-column>
-			<el-table-column prop="sex" label="性别" width="100" sortable>
+			<el-table-column prop="sex" label="性别" width="100">
         <template slot-scope="scope">
 					<span>{{scope.row.sex==0?'女':'男'}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="time" label="注册时间" width="120" sortable>
+			<el-table-column prop="time" label="注册时间" width="140">
         <template slot-scope="scope">
           <span>{{new Date(parseInt(scope.row.time)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
         </template>
 			</el-table-column>
-			<el-table-column prop="dec" label="备注" min-width="100" sortable>
+			<el-table-column prop="dec" label="备注" min-width="140">
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template slot-scope="scope">
@@ -51,8 +61,7 @@
 
 		<!--工具条-->
 		<el-col :span="24" class="toolbar">
-			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
+			<el-pagination layout="total,prev, pager, next" @current-change="handleCurrentChange" :page-size="12" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>
 
@@ -64,9 +73,6 @@
 				</el-form-item>
 				<el-form-item label="电话" prop="phone">
 					<el-input v-model="editForm.phone"></el-input>
-				</el-form-item>
-				<el-form-item label="邮箱">
-					<el-input v-model="editForm.email"></el-input>
 				</el-form-item>
 				<el-form-item label="性别">
 					<el-radio-group v-model="editForm.sex">
@@ -96,9 +102,6 @@
 				<el-form-item label="电话" prop="phone">
 					<el-input v-model="addForm.phone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="邮箱">
-					<el-input v-model="addForm.email"></el-input>
-				</el-form-item>
 				<el-form-item label="性别">
 					<el-radio-group v-model="addForm.sex">
 						<el-radio class="radio" :label="1">男</el-radio>
@@ -126,7 +129,7 @@ import Mock from "mockjs"; //delete
 import {
   getUserListPage,
   removeUser,
-  batchRemoveUser,
+  // batchRemoveUser,
   editUser,
   addUser,
   httpGet,
@@ -142,7 +145,6 @@ export default {
       },
       users: [],
       total: 0,
-      page: 1,
       listLoading: false,
       sels: [], //列表选中列
 
@@ -150,8 +152,7 @@ export default {
       editLoading: false,
       editFormRules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        phone: [{ required: true,pattern: /^1\d{10}$/, message: "手机号格式不正确", trigger: "blur" }],
-        email: [{ required: false,pattern: /^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/, message: "邮箱格式不正确，例如web@sohu.com", trigger: "blur" }]
+        phone: [{ required: true,pattern: /^1\d{10}$/, message: "手机号格式不正确", trigger: "blur" }]
       },
       //编辑界面数据
       editForm: {
@@ -159,7 +160,6 @@ export default {
         name: "",
         phone: 0,
         sex: 0,
-        email: "",
         time: "",
         dec: ""
       },
@@ -175,47 +175,51 @@ export default {
             message: "手机号格式不正确",
             trigger: "blur"
           }
-        ],
-        email: [{ required: false,pattern: /^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/, message: "邮箱格式不正确，例如web@sohu.com", trigger: "blur" }]
+        ]
       },
       //新增界面数据
       addForm: {
         name: "",
         phone: "",
         sex: 1,
-        email: "",
         time: "",
         dec: ""
-      }
+      },
+      page: 1,
+      countDown: false,
+      dateDown: false,
+      currentFiled: 'rgt',
+      currentSort: -1,
+
     };
   },
   methods: {
     handleCurrentChange(val) {
       this.page = val;
-      this.getUsers();
+      this.getUsers(this.page,this.currentFiled,this.currentSort);
     },
     //获取用户列表
-    getUsers() {
+    getUsers(page,field,sort) {
       let param = {
-        pno: this.page // 当前页码 不传的话默认1
-        // field, // 排序字段 有 'rgt'和'count'(注册时间，积分) 两种选择 不传默认为'rgt'
-        // sort // 排序方式 1或-1 默认为-1(降序)
+        pno: page, // 当前页码 不传的话默认1
+        field: field, // 排序字段 有 'rgt'和'count'(注册时间，积分) 两种选择 不传默认为'rgt'
+        sort: sort // 排序方式 1或-1 默认为-1(降序)
       };
       httpGet("/vip/getviplist", param)
         .then(res => {
           this.listLoading = false;
           console.log("res get", res);
-          this.total = res.data.pCount;
+          this.total = res.data.vipCount;
           this.listLoading = false;
           this.users = [];
           for (let i = 0; i < res.data.items.length; i++) {
             this.users.push({
-              id: i,
-              phone: res.data.items[i].phone ? res.data.items[i].phone : "null",
-              name: res.data.items[i].name ? res.data.items[i].name : "null",
-              email: res.data.items[i].email ? res.data.items[i].email : "null",
-              dec: res.data.items[i].dec ? res.data.items[i].dec : "null",
-              time: res.data.items[i].rgt ? res.data.items[i].rgt : "null",
+              id: res.data.items[i]._id,
+              phone: res.data.items[i].phone ,
+              name: res.data.items[i].name ,
+              email: res.data.items[i].email ,
+              dec: res.data.items[i].dec ,
+              time: res.data.items[i].rgt ,
               sex: res.data.items[i].gender,
               count: res.data.items[i].count
             });
@@ -227,34 +231,35 @@ export default {
         });
     },
     //删除
-    handleDel: function(index, row) {
+    handleDel(index, row) {
       this.$confirm("确认删除该记录吗?", "提示", {
         type: "warning"
       })
         .then(() => {
           this.listLoading = true;
-
-          let para = { id: row.id };
-          removeUser(para).then(res => {
-            this.listLoading = false;
-
-            this.$message({
-              message: "删除成功",
-              type: "success"
-            });
-            this.getUsers();
+          let para = { vid: row.id };
+          httpPost('/vip/delvip',para).then(res => {
+            console.log(res)
+            if(res.code == 200){
+              this.listLoading = false;
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+              this.getUsers(this.page,this.currentFiled,this.currentSort);
+            }
           });
         })
         .catch(() => {});
     },
     //显示编辑界面
-    handleEdit: function(index, row) {
+    handleEdit(index, row) {
       this.editFormVisible = true;
       this.editForm = Object.assign({}, row);
       // console.log(this.editForm)
     },
     //编辑
-    editSubmit: function() {
+    editSubmit() {
       this.$refs.editForm.validate(valid => {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
@@ -274,14 +279,14 @@ export default {
               });
               this.$refs["editForm"].resetFields();
               this.editFormVisible = false;
-              this.getUsers();
+              this.getUsers(this.page,this.currentFiled,this.currentSort);
             });
           });
         }
       });
     },
     //新增
-    addSubmit: function() {
+    addSubmit() {
       this.$refs.addForm.validate(valid => {
         if (valid) {
           console.log(this.addForm);
@@ -314,7 +319,7 @@ export default {
                   type: "success"
                 });
                 this.$refs["addForm"].resetFields();
-                this.getUsers();
+                this.getUsers(this.page,this.currentFiled,this.currentSort);
               })
               .catch(err => {
                 this.addLoading = false;
@@ -325,37 +330,52 @@ export default {
         }
       });
     },
-    selsChange: function(sels) {
+    selsChange(sels) {
       this.sels = sels;
     },
-    //批量删除
-    batchRemove: function() {
-      var ids = this.sels.map(item => item.id).toString();
-      this.$confirm("确认删除选中记录吗？", "提示", {
-        type: "warning"
-      })
-        .then(() => {
-          this.listLoading = true;
-
-          let para = { ids: ids };
-          batchRemoveUser(para).then(res => {
-            this.listLoading = false;
-
-            this.$message({
-              message: "删除成功",
-              type: "success"
-            });
-            this.getUsers();
-          });
-        })
-        .catch(() => {});
+    sortByDate(){
+      // let param = {
+      //   pno: page, // 当前页码 不传的话默认1
+      //   field: field, // 排序字段 有 'rgt'和'count'(注册时间，积分) 两种选择 不传默认为'rgt'
+      //   sort: sort // 排序方式 1或-1 默认为-1(降序)
+      // };
+      this.dateDown = !this.dateDown;
+      // console.log(this.dateDown)
+      this.currentFiled = 'rgt';
+      if(!this.dateDown){
+        // down
+        this.currentSort = -1;
+        this.getUsers(this.page,'rgt',-1);
+      }else{
+        this.currentSort = 1;
+        this.getUsers(this.page,'rgt',1);
+      }
+    },
+    sortByCount(){
+      this.countDown = !this.countDown;
+      console.log(this.countDown)
+      this.currentFiled = 'count';
+      if(!this.countDown){
+        // down
+        this.currentSort = -1;
+        this.getUsers(this.page,'count',-1);
+      }else{
+        this.currentSort = 1;
+        this.getUsers(this.page,'count',1);
+      }
     }
   },
   created() {
-    this.getUsers();
+    this.getUsers(this.page,'rgt',-1);
   }
 };
 </script>
 
 <style scoped>
+.count{
+  cursor: pointer;
+}
+.date{
+  cursor: pointer;
+}
 </style>
