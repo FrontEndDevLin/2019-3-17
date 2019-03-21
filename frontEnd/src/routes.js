@@ -119,6 +119,7 @@ let routes = [
         component: Home,
         name: '员工管理',
         iconCls: 'fa fa-anchor',
+        staff: true,
         children: [
             { path: '/staff_staff', component: staff, name: '管理店长' },
             { path: '/staff_shopowner', component: shopowner, name: '管理员工' }
@@ -152,7 +153,7 @@ let routes = [
         // iconCls: 'fa fa-cubes',
         hidden: true,
         children: [
-            { path: '/notice', component: notice, name: '通知' }
+            { path: '/notice', component: notice, name: '通知消息' }
             // { path: '/web_all', component: webAll, name: '全体通知' },
             // { path: '/web_shop', component: webShop, name: '店铺通知' },
         ]

@@ -23,7 +23,7 @@ export default {
     return {
       logining: false,
       ruleForm2: {
-        account: "13622222222",
+        account: "13633333333",//ceo:13622222222,店长:13633333333,员工:13644444444
         checkPass: "123abc"
       },
       rules2: {
@@ -46,9 +46,17 @@ export default {
           httpPost("/auth/login", loginParams)
             .then(res => {
               console.log(11, res);
-              this.logining = false;
-              sessionStorage.setItem("user", JSON.stringify({phone: this.ruleForm2.account}));
-              this.$router.push({ path: "/" });
+              if(res.code == 200){
+                this.logining = false;
+                sessionStorage.setItem("user", JSON.stringify({phone: this.ruleForm2.account}));
+                this.$router.push({ path: "/" });
+              }else{
+                this.$message({
+                  message: res.msg,
+                  type: "warning"
+                })
+                this.logining = false;
+              }
             })
             .catch(() => {
               this.logining = false;
