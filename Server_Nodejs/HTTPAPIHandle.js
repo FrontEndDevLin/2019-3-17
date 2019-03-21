@@ -7,6 +7,7 @@ function HTTPAPIHandle() {
     let Auth = require("./APIAuth");
     let Cloth = require("./APICloth");
     let Vip = require("./APIVip");
+    let Store = require("./APIStore");
     let ConfParser = require("./ConfigParser");
     let NS = require("./NameSpace");
 
@@ -20,6 +21,8 @@ function HTTPAPIHandle() {
         // res.setHeader('Access-Control-Allow-Origin', ConfParser.Parse("cors", "acc-host"));
         res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
         res.setHeader('Access-Control-Allow-Credentials', true);
+
+        handle = handle.toLowerCase();
 
         // 过滤未登录的请求
         if (!(router == "auth" && (handle == "login" || handle == "checklogin" || handle == "logout"))) {
@@ -42,6 +45,9 @@ function HTTPAPIHandle() {
             } break;
             case "vip": {
                 Vip.OnVip(req, res, handle);
+            } break;
+            case "store": {
+                Store.OnStore(req, res, handle);
             } break;
             default:
                 break;

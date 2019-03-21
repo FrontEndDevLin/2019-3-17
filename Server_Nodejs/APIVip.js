@@ -42,7 +42,7 @@ function Vip() {
 
                 field = field == "count" ? "count" : "rgt";
                 sort = sort == "1" ? "" : "DESC";
-                let sqlSel = `SELECT name, phone, gender, rgt, count FROM vip WHERE del=? 
+                let sqlSel = `SELECT name, phone, gender, rgt, _id, count FROM vip WHERE del=? 
                     ORDER BY ${field} ${sort} LIMIT ?, ?`;
                 MySQL.Query(sqlSel, [1, (pno - 1) * pageSize, pageSize], (err, result) => {
                     if (err) throw err;
@@ -88,6 +88,72 @@ function Vip() {
                         }
                     })
                 });
+            } break;
+            case 'delvip': {
+                if (!NS.MethodFilter(req, res, "post")) return;
+                NS.GetPostData(req, function (postParam) {
+                    let id = postParam["vid"];
+                    if (!id) {
+                        return NS.Send(res, NS.Build(415, "参数错误"))
+                    }
+                    let sql = `UPDATE vip SET del=? WHERE _id=?`;
+                    MySQL.Query(sql, [0, id], (err, result) => {
+                        if (err) throw err;
+                        if (result.affectedRows == 1) {
+                            NS.Send(res, NS.Build(200, "删除成功"))
+                        } else {
+                            NS.Send(res, NS.Build(400, "删除失败"))
+                        }
+                    })
+                });
+            } break;
+            case 'editvip': {
+                // /vip/editvip  post  {vid: , newName: '', newPhone: '', newGender: ''};
+                if (!NS.MethodFilter(req, res, "post")) return;
+                NS.GetPostData(req, function (postParam) {
+                    let id = postParam["vid"];
+                    if (!id) {
+                        return NS.Send(res, NS.Build(415, "参数错误"))
+                    }
+                    let name = postParam["newName"] || "", phone = postParam["newPhone"], gender = parseInt(postParam["newGender"]) || 0;
+                    if (!name) {
+                        return NS.Send(res, NS.Build(415, "用户名不能为空"))
+                    }
+                    let querySql = `SELECT phone FROM vip WHERE _id=?`;
+                    MySQL.Query(querySql, id, (err, result) => {
+                        if (err) throw err;
+                        if (result && result[0]) {
+                            if (phone == result[0].phone) {
+                                let updateSql = `UPDATE vip SET name=?,gender=? WHERE _id=?`;
+                                MySQL.Query(updateSql, [name, gender, id], (err, result) => {
+                                    if (err) throw err;
+                                    if (result && result.affectedRows == 1) {
+                                        NS.Send(res, NS.Build(200, "更新成功"))
+                                    } else {
+                                        NS.Send(res, NS.Build(400, "更新失败")) 
+                                    }
+                                })
+                            } else {
+                                let selPhoneSql = `SELECT _id FROM vip WHERE phone=?`;
+                                MySQL.Query(selPhoneSql, [phone], (err, result) => {
+                                    if (err) throw err;
+                                    if (result && result.length >= 1) {
+                                        return NS.Send(res, NS.Build(415, "手机号码已存在"))
+                                    }
+                                    let updateSql = `UPDATE vip SET name=?,gender=?,phone=? WHERE _id=?`;
+                                    MySQL.Query(updateSql, [name, gender, phone, id], (err, result) => {
+                                        if (err) throw err;
+                                        if (result && result.affectedRows == 1) {
+                                            NS.Send(res, NS.Build(200, "更新成功"))
+                                        } else {
+                                            NS.Send(res, NS.Build(400, "更新失败"))
+                                        }
+                                    })
+                                })
+                            }
+                        }
+                    })
+                })
             } break;
             default:
                 break;

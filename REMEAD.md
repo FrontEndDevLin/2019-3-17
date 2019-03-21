@@ -188,6 +188,35 @@
     }
 ```
 
+删除会员
+```
+    http://192.168.2.108:4449/vip/delvip
+    method: post,
+    param: {
+        vid
+    }
+```
+
+编辑会员
+```
+    http://192.168.2.108:4449/vip/editvip
+    method: post,
+    param: {
+        newName:
+        newPhone:
+        newGender
+    }
+```
+
+添加店铺
+```
+    http://192.168.2.108:4449/store/addstore
+    method: post,
+    param: {
+        storeName: string 必填
+        intro: string 店铺简介 可填
+    }
+```
 
 功能:
 1. 登录/注销

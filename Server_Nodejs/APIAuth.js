@@ -16,7 +16,6 @@ function Auth() {
         if (req.method == "GET") {
             param = qs.parse(query);
         }
-        handle = handle.toLowerCase();
         switch (handle) {
             case 'login': {
                 if (!NS.MethodFilter(req, res, "post")) return;
