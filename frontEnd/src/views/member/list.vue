@@ -10,7 +10,7 @@
 					<el-button type="primary" v-on:click="getUsers">查询</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="handleAdd">新增</el-button>
+					<el-button type="primary" @click="addFormVisible = true">新增</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -21,15 +21,23 @@
 			</el-table-column>
 			<el-table-column type="index" width="60">
 			</el-table-column>
-			<el-table-column prop="name" label="会员名称" width="80" sortable>
+			<el-table-column prop="name" label="会员名称" width="120" sortable>
 			</el-table-column>
-			<el-table-column prop="tel" label="电话" width="100" sortable>
+			<el-table-column prop="phone" label="电话" width="100" sortable>
 			</el-table-column>
 			<el-table-column prop="email" label="邮箱" width="100" sortable>
 			</el-table-column>
-			<el-table-column prop="sex" label="性别" width="50" sortable>
+			<el-table-column prop="count" label="积分" width="100" sortable>
+			</el-table-column>
+			<el-table-column prop="sex" label="性别" width="100" sortable>
+        <template slot-scope="scope">
+					<span>{{scope.row.sex==0?'女':'男'}}</span>
+				</template>
 			</el-table-column>
 			<el-table-column prop="time" label="注册时间" width="120" sortable>
+        <template slot-scope="scope">
+          <span>{{new Date(parseInt(scope.row.time)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
+        </template>
 			</el-table-column>
 			<el-table-column prop="dec" label="备注" min-width="100" sortable>
 			</el-table-column>
@@ -54,21 +62,21 @@
 				<el-form-item label="会员名称" prop="name">
 					<el-input v-model="editForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="电话">
-					<el-input-number v-model="editForm.tel" :min="0" :max="200"></el-input-number>
+				<el-form-item label="电话" prop="phone">
+					<el-input v-model="editForm.phone"></el-input>
 				</el-form-item>
 				<el-form-item label="邮箱">
-					<el-input-number v-model="editForm.email" :min="0" :max="200"></el-input-number>
+					<el-input v-model="editForm.email"></el-input>
 				</el-form-item>
 				<el-form-item label="性别">
-					<el-radio-group v-model="addForm.sex">
+					<el-radio-group v-model="editForm.sex">
 						<el-radio class="radio" :label="1">男</el-radio>
 						<el-radio class="radio" :label="0">女</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item label="注册时间">
+				<!-- <el-form-item label="注册时间">
 					<el-date-picker type="date" placeholder="选择日期" v-model="editForm.time"></el-date-picker>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item label="备注">
 					<el-input type="textarea" v-model="editForm.dec"></el-input>
 				</el-form-item>
@@ -85,11 +93,11 @@
 				<el-form-item label="会员名称" prop="name">
 					<el-input v-model="addForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="电话">
-					<el-input-number v-model="editForm.tel" :min="0" :max="200"></el-input-number>
+				<el-form-item label="电话" prop="phone">
+					<el-input v-model="addForm.phone" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="邮箱">
-					<el-input-number v-model="editForm.email" :min="0" :max="200"></el-input-number>
+					<el-input v-model="addForm.email"></el-input>
 				</el-form-item>
 				<el-form-item label="性别">
 					<el-radio-group v-model="addForm.sex">
@@ -97,9 +105,9 @@
 						<el-radio class="radio" :label="0">女</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item label="注册时间">
+				<!-- <el-form-item label="注册时间">
 					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.time"></el-date-picker>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item label="备注">
 					<el-input type="textarea" v-model="addForm.dec"></el-input>
 				</el-form-item>
@@ -121,7 +129,8 @@ import {
   batchRemoveUser,
   editUser,
   addUser,
-  httpGet
+  httpGet,
+  httpPost
 } from "../../api/api";
 
 export default {
@@ -139,15 +148,16 @@ export default {
       editFormVisible: false, //编辑界面是否显示
       editLoading: false,
       editFormRules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        phone: [{ required: true, message: "请输入电话", trigger: "blur" }]
       },
       //编辑界面数据
       editForm: {
         id: 0,
         name: "",
-		tel: 0,
-		sex: 0,
-		email:'123@qq.com',
+        phone: 0,
+        sex: 0,
+        email: "",
         time: "",
         dec: ""
       },
@@ -155,74 +165,56 @@ export default {
       addFormVisible: false, //新增界面是否显示
       addLoading: false,
       addFormRules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        phone: [{ required: true, message: "请输入电话", trigger: "blur" }]
       },
       //新增界面数据
       addForm: {
         name: "",
-        tel: 0,
-		sex: 0,
-		email:'123@qq.com',
+        phone: "",
+        sex: 1,
+        email: "",
         time: "",
         dec: ""
       }
     };
   },
   methods: {
-    //性别显示转换
-    formatSex: function(row, column) {
-      return row.sex == 1 ? "男" : row.sex == 0 ? "女" : "未知";
-    },
     handleCurrentChange(val) {
       this.page = val;
       this.getUsers();
     },
     //获取用户列表
     getUsers() {
-      //   let para = {
-      //     page: this.page,
-      //     name: this.filters.name
-      //   };
-      //   this.listLoading = true;
-      //   
-      //   getUserListPage(para).then(res => {
-      //     this.total = res.data.total;
-      //     this.users = res.data.users;
-      //     this.listLoading = false;
-      //     
-      //   });
-      this.total = 1; //delete
-      this.listLoading = false;
-      this.users = []; //delete
-
-      for (let i = 0; i < 86; i++) {
-        //delete
-        this.users.push(
-          Mock.mock({
-            id: Mock.Random.guid(),
-            tel: '123456',
-            name: Mock.Random.cname(),
-			email:'123@qq.com',
-            dec: '会员',
-            time: Mock.Random.date(),
-            sex: Mock.Random.integer(0, 1)
-          })
-        );
-      }
-
-      //   let param = {
-      //     title: "长袖", // unique
-      //     tel: 20, // default 10
-      //     type: 0 // default 0  0代表织物类 基本只有这个
-      //   };
-
-      //   httpGet("/cloth/addcommodit",param)
-      //   .then(res => {
-      // 	  console.log('cloth/addcommodit',res)
-      //   })
-      //   .catch( ()=>{
-      // 	  this.listLoading = false;
-      //   });
+      let param = {
+        pno: this.page // 当前页码 不传的话默认1
+        // field, // 排序字段 有 'rgt'和'count'(注册时间，积分) 两种选择 不传默认为'rgt'
+        // sort // 排序方式 1或-1 默认为-1(降序)
+      };
+      httpGet("/vip/getviplist", param)
+        .then(res => {
+          this.listLoading = false;
+          console.log("res get", res);
+          this.total = res.data.pCount;
+          this.listLoading = false;
+          this.users = [];
+          for (let i = 0; i < res.data.items.length; i++) {
+            this.users.push({
+              id: i,
+              phone: res.data.items[i].phone ? res.data.items[i].phone : "null",
+              name: res.data.items[i].name ? res.data.items[i].name : "null",
+              email: res.data.items[i].email ? res.data.items[i].email : "null",
+              dec: res.data.items[i].dec ? res.data.items[i].dec : "null",
+              time: res.data.items[i].rgt ? res.data.items[i].rgt : "null",
+              sex: res.data.items[i].gender,
+              count: res.data.items[i].count
+            });
+          }
+        })
+        .catch(() => {
+          this.listLoading = false;
+          console.log(err);
+        });
     },
     //删除
     handleDel: function(index, row) {
@@ -231,11 +223,11 @@ export default {
       })
         .then(() => {
           this.listLoading = true;
-          
+
           let para = { id: row.id };
           removeUser(para).then(res => {
             this.listLoading = false;
-            
+
             this.$message({
               message: "删除成功",
               type: "success"
@@ -249,17 +241,7 @@ export default {
     handleEdit: function(index, row) {
       this.editFormVisible = true;
       this.editForm = Object.assign({}, row);
-    },
-    //显示新增界面
-    handleAdd: function() {
-      this.addFormVisible = true;
-      this.addForm = {
-        name: "",
-        sex: -1,
-        age: 0,
-        time: "",
-        dec: ""
-      };
+      // console.log(this.editForm)
     },
     //编辑
     editSubmit: function() {
@@ -267,7 +249,7 @@ export default {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.editLoading = true;
-            
+
             let para = Object.assign({}, this.editForm);
             para.time =
               !para.time || para.time == ""
@@ -275,7 +257,7 @@ export default {
                 : util.formatDate.format(new Date(para.time), "yyyy-MM-dd");
             editUser(para).then(res => {
               this.editLoading = false;
-              
+
               this.$message({
                 message: "提交成功",
                 type: "success"
@@ -292,9 +274,10 @@ export default {
     addSubmit: function() {
       this.$refs.addForm.validate(valid => {
         if (valid) {
+          console.log(this.addForm);
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.addLoading = true;
-            
+
             // let para = Object.assign({}, this.addForm);
             // para.time =
             //   !para.time || para.time == ""
@@ -302,7 +285,7 @@ export default {
             //     : util.formatDate.format(new Date(para.time), "yyyy-MM-dd");
             // addUser(para).then(res => {
             //   this.addLoading = false;
-            //   
+            //
             //   this.$message({
             //     message: "提交成功",
             //     type: "success"
@@ -311,20 +294,23 @@ export default {
             //   this.addFormVisible = false;
             //   this.getUsers();
             // });
-            let param = {
-              title: "长袖", // unique
-              tel: 20, // default 10
-              type: 0 // default 0  0代表织物类 基本只有这个
-            };
-			httpGet("/cloth/addcommodit",param)
-			.then((res)=>{
-				this.addLoading = false;
-				console.log(33,res)
-			})
-			.catch((err)=>{
-				this.addLoading = false;
-				console.log(err)
-			});
+            httpPost("/vip/addvip", this.addForm)
+              .then(res => {
+                this.addFormVisible = false;
+                this.addLoading = false;
+                console.log(33, res);
+                this.$message({
+                  message: "提交成功",
+                  type: "success"
+                });
+                // this.$refs["addForm"].resetFields();
+                this.getUsers();
+              })
+              .catch(err => {
+                this.addLoading = false;
+                this.addFormVisible = false;
+                console.log(err);
+              });
           });
         }
       });
@@ -340,11 +326,11 @@ export default {
       })
         .then(() => {
           this.listLoading = true;
-          
+
           let para = { ids: ids };
           batchRemoveUser(para).then(res => {
             this.listLoading = false;
-            
+
             this.$message({
               message: "删除成功",
               type: "success"
@@ -355,7 +341,7 @@ export default {
         .catch(() => {});
     }
   },
-  mounted() {
+  created() {
     this.getUsers();
   }
 };

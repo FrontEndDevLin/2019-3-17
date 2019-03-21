@@ -24,9 +24,9 @@ const axiosP = axios.create({
 });
 export const httpGet = (url, data) => {
     return new Promise((resolve, reject) => {
-        axiosP.get(base + url,{params:data})
+        axiosP.get(base + url, { params: data })
             .then(res => {
-                if (res.data.code == 200) {                        
+                if (res.data.code == 200) {
                     resolve(res.data);
                 } else {
                     console.log(res);
@@ -46,7 +46,7 @@ export const httpPost = (url, data) => {
         axiosP.post(base + url, qs.stringify(data))
             .then(res => {
                 // console.log(1, res)
-                if (res.data.code == 200) {                        
+                if (res.data.code == 200) {
                     resolve(res.data);
                 } else {
                     console.log(res);
@@ -61,4 +61,35 @@ export const httpPost = (url, data) => {
                 )
             })
     })
+}
+
+/*用户名验证*/
+export const checkUser = (user) => {   
+    var reg = /^[a-zA-Z][a-zA-Z0-9]{3,15}$/;
+    if (reg.test(user) == false) return false;
+    return true;
+}
+/*密码验证*/
+export const checkPwd = (pwd) => {
+    var reg = /^[a-zA-Z0-9]{4,20}$/;
+    if (reg.test(pwd) == false) return false;//"密码不能含有非法字符，长度在4-20之间";
+    return true;
+}
+
+export const checkRepwd = (pwd,repwd) => {
+    if (pwd != repwd) return false;//"两次输入的密码不一致";
+    return true;
+}
+
+/*验证邮箱*/
+export const checkEmail = (email) => {
+    var reg = /^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/;
+    if (reg.test(email) == false) return false;//"Email格式不正确，例如web@sohu.com";
+    return true;
+}
+/*验证手机号码*/
+export const checkMobile = (mobile) => {
+    var regMobile = /^1\d{10}$/;
+    if (regMobile.test(mobile) == false) return false;//"手机号码不正确，请重新输入";
+    return true;
 }
