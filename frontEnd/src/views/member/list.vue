@@ -130,7 +130,8 @@ import {
   editUser,
   addUser,
   httpGet,
-  httpPost
+  httpPost,
+  checkMobile
 } from "../../api/api";
 
 export default {
@@ -149,7 +150,8 @@ export default {
       editLoading: false,
       editFormRules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        phone: [{ required: true, message: "请输入电话", trigger: "blur" }]
+        phone: [{ required: true,pattern: /^1\d{10}$/, message: "手机号格式不正确", trigger: "blur" }],
+        email: [{ required: false,pattern: /^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/, message: "邮箱格式不正确，例如web@sohu.com", trigger: "blur" }]
       },
       //编辑界面数据
       editForm: {
@@ -166,7 +168,15 @@ export default {
       addLoading: false,
       addFormRules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        phone: [{ required: true, message: "请输入电话", trigger: "blur" }]
+        phone: [
+          {
+            required: true,
+            pattern: /^1\d{10}$/,
+            message: "手机号格式不正确",
+            trigger: "blur"
+          }
+        ],
+        email: [{ required: false,pattern: /^\w+@\w+(\.[a-zA-Z]{2,3}){1,2}$/, message: "邮箱格式不正确，例如web@sohu.com", trigger: "blur" }]
       },
       //新增界面数据
       addForm: {
@@ -303,7 +313,7 @@ export default {
                   message: "提交成功",
                   type: "success"
                 });
-                // this.$refs["addForm"].resetFields();
+                this.$refs["addForm"].resetFields();
                 this.getUsers();
               })
               .catch(err => {
