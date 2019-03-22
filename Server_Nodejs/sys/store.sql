@@ -18,10 +18,12 @@ CREATE Table Member(   # 成员
     del TINYINT DEFAULT 1
 );
 
+drop table if EXISTS store;
 CREATE Table Store(    # 分店
     _id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32) UNIQUE,
     intro VARCHAR(512) DEFAULT '',
+    rgt BIGINT NOT NULL,
     del TINYINT DEFAULT 1
 );
 

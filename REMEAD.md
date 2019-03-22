@@ -175,6 +175,14 @@
     }
 ```
 
+店铺列表
+```
+    http://192.168.2.108:4449/store/getstorelist
+    method: get,
+    param: {
+        pno: number 请求页码，默认为1
+    }
+```
 
 
 ## 功能:

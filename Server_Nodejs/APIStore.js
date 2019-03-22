@@ -35,8 +35,8 @@ function Store () {
                         if (result && result.length >= 1) {
                             return NS.Send(res, NS.Build(400, "店铺名重复"))
                         } else {
-                            let sql = `INSERT INTO store VALUES(NULL, ?, ?, DEFAULT)`;
-                            MySQL.Query(sql, [name, intro], (err, result) => {
+                            let sql = `INSERT INTO store VALUES(NULL, ?, ?, ?, DEFAULT)`;
+                            MySQL.Query(sql, [name, intro, new Date().getTime()], (err, result) => {
                                 if (err) throw err;
                                 let data;
                                 if (result && result.affectedRows == 1) {
@@ -74,9 +74,8 @@ function Store () {
                     }
                 });
 
-                // TODO:
-                let sqlSel = `SELECT name, phone, gender, rgt, _id, count FROM vip WHERE del=? 
-                    ORDER BY ${field} ${sort} LIMIT ?, ?`;
+                let sqlSel = `SELECT name, intro, rgt FROM store WHERE del=? 
+                    ORDER BY rgt LIMIT ?, ?`;
                 MySQL.Query(sqlSel, [1, (pno - 1) * pageSize, pageSize], (err, result) => {
                     if (err) throw err;
                     if (result) {
