@@ -22,11 +22,13 @@
           <span>{{new Date(parseInt(scope.row.time)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
         </template>
 			</el-table-column>
+			<el-table-column prop="shopowner" label="店铺店长" width="180" sortable>
+			</el-table-column>
 			<el-table-column prop="dec" label="店铺简介" width="220" sortable>
 			</el-table-column>
 			<el-table-column label="操作" width="200">
 				<template slot-scope="scope">
-					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">恢复</el-button>
+					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -113,7 +115,7 @@ export default {
       addFormVisible: false, //新增界面是否显示
       addLoading: false,
       addFormRules: {
-        newName: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        storeName: [{ required: true, message: "请输入姓名", trigger: "blur" }]
       },
       //新增界面数据
       addForm: {
