@@ -31,25 +31,25 @@
 		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
 			<el-table-column type="vid" width="0">
 			</el-table-column>
-			<el-table-column type="index" width="80">
+			<el-table-column type="index" min-width="80">
 			</el-table-column>
-			<el-table-column prop="newName" label="会员名称" width="120">
+			<el-table-column prop="newName" label="会员名称" min-width="120">
 			</el-table-column>
-			<el-table-column prop="newPhone" label="电话" width="140">
+			<el-table-column prop="newPhone" label="电话" min-width="140">
 			</el-table-column>
-			<el-table-column prop="count" label="积分" width="100">
+			<el-table-column prop="count" label="积分" min-width="100">
 			</el-table-column>
-			<el-table-column prop="newGender" label="性别" width="100">
+			<el-table-column prop="newGender" label="性别" min-width="100">
         <template slot-scope="scope">
 					<span>{{scope.row.newGender==2?'女':scope.row.newGender==1?'男':'未知'}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="time" label="注册时间" width="140">
+			<el-table-column prop="time" label="注册时间" min-width="140">
         <template slot-scope="scope">
           <span>{{new Date(parseInt(scope.row.time)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
         </template>
 			</el-table-column>
-			<el-table-column label="操作" width="150">
+			<el-table-column label="操作" min-width="150">
 				<template slot-scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
