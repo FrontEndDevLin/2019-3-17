@@ -74,7 +74,7 @@ function Store () {
                     }
                 });
 
-                let sqlSel = `SELECT name, intro, rgt FROM store WHERE del=? 
+                let sqlSel = `SELECT _id, name, intro, rgt FROM store WHERE del=? 
                     ORDER BY rgt LIMIT ?, ?`;
                 MySQL.Query(sqlSel, [1, (pno - 1) * pageSize, pageSize], (err, result) => {
                     if (err) throw err;
@@ -88,6 +88,10 @@ function Store () {
                         NS.Send(res, NS.Build(406, "参数错误"))
                     }
                 });
+            } break;
+            case 'editstore': {
+                if (!NS.MethodFilter(req, res, "post")) return;
+                
             } break;
             default:
                 break;

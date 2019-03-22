@@ -8,6 +8,7 @@ function HTTPAPIHandle() {
     let Cloth = require("./APICloth");
     let Vip = require("./APIVip");
     let Store = require("./APIStore");
+    let Staff = require("./APIStaff");
     let ConfParser = require("./ConfigParser");
     let NS = require("./NameSpace");
 
@@ -48,6 +49,9 @@ function HTTPAPIHandle() {
             } break;
             case "store": {
                 Store.OnStore(req, res, handle);
+            } break;
+            case "staff": {
+                Staff.OnStaff(req, res, handle);
             } break;
             default:
                 break;

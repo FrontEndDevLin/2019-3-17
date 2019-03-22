@@ -184,6 +184,25 @@
     }
 ```
 
+能否添加员工
+```
+    http://192.168.2.108:4449/staff/canaddstaff
+    method: get
+```
+
+添加员工
+```
+    http://192.168.2.108:4449/staff/addstaff
+    method: post,
+    param: {
+        name: string,
+        phone: number/string,
+        pwd: string,
+        storeId: number,
+        ident: 'staff'(默认员工) / 'manager'
+    }
+```
+
 
 ## 功能:
 ### ~~登录/注销~~
@@ -209,7 +228,7 @@
 2. 优惠促销(根据会员积分)
 
 ### 店铺管理(仅CEO可见)
-1. 店铺列表(可修改)
+1. ~~店铺列表~~(可修改)
 2. ~~添加店铺~~
 
 ### 员工管理(CEO、店长可见)
