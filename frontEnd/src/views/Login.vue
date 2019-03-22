@@ -23,7 +23,7 @@ export default {
     return {
       logining: false,
       ruleForm2: {
-        account: "13633333333",//ceo:13622222222,店长:13633333333,员工:13644444444
+        account: "13622222222",//ceo:13622222222,店长:13633333333,员工:13644444444
         checkPass: "123abc"
       },
       rules2: {

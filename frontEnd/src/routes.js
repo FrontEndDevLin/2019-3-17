@@ -121,8 +121,8 @@ let routes = [
         iconCls: 'fa fa-anchor',
         staff: true,
         children: [
-            { path: '/staff_staff', component: staff, name: '管理店长' },
-            { path: '/staff_shopowner', component: shopowner, name: '管理员工' }
+            { path: '/staff_staff', component: staff, name: '管理店长',id:9 },
+            { path: '/staff_shopowner', component: shopowner, name: '管理员工',id:0 }
         ]
     },
     {
