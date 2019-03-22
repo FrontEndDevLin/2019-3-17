@@ -11,11 +11,13 @@
 
 		<!--列表-->
 		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-			<el-table-column type="selection" width="55">
-			</el-table-column>
+			<!-- <el-table-column type="selection" width="55">
+			</el-table-column> -->
 			<el-table-column type="index" width="100">
 			</el-table-column>
 			<el-table-column prop="newName" label="店铺名称" width="180" sortable>
+			</el-table-column>
+			<el-table-column prop="vid" label="店铺编号" width="120" sortable>
 			</el-table-column>
 			<el-table-column prop="time" label="开店日期" width="180" sortable>
         <template slot-scope="scope">
