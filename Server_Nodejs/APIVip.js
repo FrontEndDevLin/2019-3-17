@@ -25,7 +25,7 @@ function Vip() {
                 let sqlCnt = `SELECT count(_id) AS vipCount FROM vip WHERE del=?`;
                 MySQL.Query(sqlCnt, [1], (err, result) => {
                     if (err) throw err;
-                    if (result[0] && result[0]["vipCount"]) {
+                    if (result[0] && result[0]["vipCount"] >= 0) {
                         let count = result[0]["vipCount"];
                         Object.assign(rspData, {
                             vipCount: count,
