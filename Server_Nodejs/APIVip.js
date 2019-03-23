@@ -21,7 +21,7 @@ function Vip() {
                 let pno = param.pno || 1, field = param.field || "rgt", sort = param.sort || "-1";
                 let pageSize = 12;
                 let progress = 0;
-                let rspData = { pno: 1, vipCount: '', pCount: '', items: [] };
+                let rspData = { pno: pno, vipCount: '', pCount: '', items: [] };
                 let sqlCnt = `SELECT count(_id) AS vipCount FROM vip WHERE del=?`;
                 MySQL.Query(sqlCnt, [1], (err, result) => {
                     if (err) throw err;

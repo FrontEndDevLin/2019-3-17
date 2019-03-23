@@ -48,6 +48,11 @@ let NameSpace = {
         } else {
             return true;
         }
+    },
+
+    Base64ToImg: function (base64String, imgType) {
+        imgType = imgType || "jpg";
+        return "data:image/" + imgType + ";base64," + base64String;
     }
 }
 

@@ -187,7 +187,10 @@
 能否添加员工
 ```
     http://192.168.2.108:4449/staff/canaddstaff
-    method: get
+    method: get,
+    param: {
+        ident: string 可选 "manager" || "staff"(默认值)
+    }
 ```
 
 添加员工
@@ -203,6 +206,69 @@
     }
 ```
 
+获取店长列表
+```
+    http://192.168.2.108:4449/staff/getmanagerlist
+    method: get,
+    param: {
+        pno: [number] 默认为1
+    }
+```
+
+获取员工列表
+```
+    http://192.168.2.108:4449/staff/getstafflist
+    method: get,
+    param: {
+        pno: [number] 默认为1
+    }
+```
+
+编辑店长资料
+```
+    http://192.168.2.108:4449/staff/editmanager
+    method: post,
+    param: {
+        id: number,
+        newName: string,
+        newPhone: number,
+        gender: number,
+        salary: number,
+        indet: [string]     默认为空，传"staff"则降级为员工
+    }
+```
+
+编辑员工资料
+```
+    http://192.168.2.108:4449/staff/editstaff
+    method: post,
+    param: {
+        id: number,
+        newName: string,
+        newPhone: number,
+        gender: number,
+        salary: number,
+        indet: [string]     默认为空，传"manager"则升级为店长
+    }
+```
+
+删除店长
+```
+    http://192.168.2.108:4449/staff/delmanager
+    method: post,
+    param: {
+        id: number
+    }
+```
+
+删除员工
+```
+    http://192.168.2.108:4449/staff/delstaff
+    method: post,
+    param: {
+        id: number
+    }
+```
 
 ## 功能:
 ### ~~登录/注销~~
@@ -231,9 +297,9 @@
 1. ~~店铺列表~~(可修改)
 2. ~~添加店铺~~
 
-### 员工管理(CEO、店长可见)
-1. 店长管理(仅CEO可见)
-2. 员工管理(CEO、店长可见)
+### 员工管理(~~CEO、店长可见~~)
+1. 店长管理(~~仅CEO可见~~)
+2. 员工管理(~~CEO、店长可见~~) CEO可见全体员工，店长可见所属员工
 
 ### 系统管理(CEO、店长可见)
 1. 全体通知(CEO可见)

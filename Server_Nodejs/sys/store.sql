@@ -15,17 +15,19 @@ CREATE Table Member(   # 成员
     store TINYINT NOT NULL,
     rgt BIGINT NOT NULL,
     intro VARCHAR(512) DEFAULT '',
+    salary INT DEFAULT 2000,
     del TINYINT DEFAULT 1
 );
 
-drop table if EXISTS store;
 CREATE Table Store(    # 分店
     _id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(32) UNIQUE,
     intro VARCHAR(512) DEFAULT '',
     rgt BIGINT NOT NULL,
+    own INT DEFAULT 0,  # 属于
     del TINYINT DEFAULT 1
 );
+INSERT INTO Store VALUES(NULL, "1号店", DEFAULT, 1552902178513, 2, DEFAULT);
 
 CREATE Table Vip(  # 会员
     _id INT PRIMARY KEY AUTO_INCREMENT,
@@ -81,6 +83,6 @@ CREATE Table Config(
     page404 VARCHAR(256)
 );
 
-INSERT INTO Member VALUES(null, "CEO", 1, 13622222222, DEFAULT, 99, md5("123abc"), "avatar/default/default_003.jpg", 0, 1552902178513, DEFAULT, DEFAULT);
-INSERT INTO Member VALUES(null, "Lin", 1, 13633333333, DEFAULT, 9, md5("123abc"), "avatar/default/default_002.jpg", 1, 1552902178513, DEFAULT, DEFAULT);
-INSERT INTO Member VALUES(null, "Jiangjiang", 2, 13644444444, DEFAULT, 0, md5("123abc"), "avatar/default/default_005.jpg", 1, 1552902178513, DEFAULT, DEFAULT);
+INSERT INTO Member VALUES(null, "CEO", 1, 13622222222, DEFAULT, 99, md5("123abc"), "avatar/default/default_003.jpg", 0, 1552902178513, DEFAULT, DEFAULT, DEFAULT);
+INSERT INTO Member VALUES(null, "Lin", 1, 13633333333, DEFAULT, 9, md5("123abc"), "avatar/default/default_002.jpg", 1, 1552902178513, DEFAULT, DEFAULT, DEFAULT);
+INSERT INTO Member VALUES(null, "Jiangjiang", 2, 13644444444, DEFAULT, 0, md5("123abc"), "avatar/default/default_005.jpg", 1, 1552902178513, DEFAULT, DEFAULT, DEFAULT);

@@ -20,7 +20,7 @@ function Cloth() {
                 let pno = param["pno"] || 1, field = param["field"] || "type", sort = param["sort"] || "-1";
                 let pageSize = 12;
                 let progress = 0;
-                let rspData = { pno: 1, listCount: '', pCount: '', items: [] };
+                let rspData = { pno: pno, listCount: '', pCount: '', items: [] };
                 let sqlCnt = `SELECT count(_id) AS listCount FROM commodit WHERE del=?`;
                 MySQL.Query(sqlCnt, [1], (err, result) => {
                     if (err) throw err;

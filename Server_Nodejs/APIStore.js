@@ -35,7 +35,7 @@ function Store () {
                         if (result && result.length >= 1) {
                             return NS.Send(res, NS.Build(400, "店铺名重复"))
                         } else {
-                            let sql = `INSERT INTO store VALUES(NULL, ?, ?, ?, DEFAULT)`;
+                            let sql = `INSERT INTO store VALUES(NULL, ?, ?, ?, DEFAULT, DEFAULT)`;
                             MySQL.Query(sql, [name, intro, new Date().getTime()], (err, result) => {
                                 if (err) throw err;
                                 let data;
@@ -55,7 +55,7 @@ function Store () {
                 let pno = param.pno || 1;
                 let pageSize = 12;
                 let progress = 0;
-                let rspData = { pno: 1, storeCount: '', pCount: '', items: [] };
+                let rspData = { pno: pno, storeCount: '', pCount: '', items: [] };
                 let sqlCnt = `SELECT count(_id) AS storeCount FROM store WHERE del=?`;
                 MySQL.Query(sqlCnt, [1], (err, result) => {
                     if (err) throw err;
@@ -74,8 +74,7 @@ function Store () {
                     }
                 });
 
-                let sqlSel = `SELECT _id, name, intro, rgt FROM store WHERE del=? 
-                    ORDER BY rgt LIMIT ?, ?`;
+                let sqlSel = `SELECT _id, name, intro, own, (SELECT name FROM member WHERE _id = own and del=1 ) AS owname, rgt FROM store WHERE del=? ORDER BY rgt LIMIT ?, ?`;
                 MySQL.Query(sqlSel, [1, (pno - 1) * pageSize, pageSize], (err, result) => {
                     if (err) throw err;
                     if (result) {
@@ -91,7 +90,7 @@ function Store () {
             } break;
             case 'editstore': {
                 if (!NS.MethodFilter(req, res, "post")) return;
-                
+
             } break;
             default:
                 break;
