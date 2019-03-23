@@ -12,6 +12,7 @@ function Orderform() {
     this.OnOrderform = function (req, res, handle) {
         let session_id = NS.GetCookieParam(req)["session_id"];
         let uid = NS.sessionMap.get(session_id)["dc_uid"];
+        let level = NS.sessionMap.get(session_id)["dc_level"];
 
         let query = url.parse(req.url).query;
 
@@ -51,7 +52,7 @@ function Orderform() {
                                                 if (err) throw err;
                                                 if (result && result[0]) {
                                                     let storeId = result[0]["store"];
-                                                    let formSql = "INSERT INTO orderform VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, DEFAULT, DEFAULT, DEFAULT, DEFAULT)";
+                                                    let formSql = "INSERT INTO orderform VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, ?, DEFAULT, DEFAULT, DEFAULT, DEFAULT)";
                                                     MySQL.Query(formSql, [NS.GetRandomStr(), vname, phone, uid, storeId, new Date().getTime(), clothId, price], (err, result) => {
                                                         if (err) throw err;
                                                         if (result.affectedRows == 1) {
@@ -76,6 +77,63 @@ function Orderform() {
                             NS.Send(res, NS.Build(400, "会员不存在，请先添加该会员"))
                         }
                     })
+                })
+            } break;
+            case 'getform': {
+                if (!NS.MethodFilter(req, res, "get")) return;
+                let pno = param["pno"] || 1, field = param.field || "accepttime", sort = param.sort || "-1";
+                let pageSize = 12;
+                let progress = 0;
+                let rspData = { pno: pno, formCount: '', pCount: '', items: [] };
+
+                let sqlCnt = `SELECT count(_id) AS formCount FROM orderform WHERE del=?`;
+                if (level != 99) {
+                    sqlCnt += ` AND acceptStore=(SELECT store FROM member WHERE _id=${uid})`;
+                }
+                MySQL.Query(sqlCnt, [1], (err, result) => {
+                    if (err) throw err;
+                    if (result[0] && result[0]["formCount"] >= 0) {
+                        let count = result[0]["formCount"];
+                        Object.assign(rspData, {
+                            formCount: count,
+                            pCount: Math.ceil(count / pageSize)
+                        });
+                        progress += 50;
+                        if (progress == 100) {
+                            NS.Send(res, NS.Build(200, "查询成功", rspData))
+                        }
+                    } else {
+                        NS.Send(res, NS.Build(406, "参数错误"))
+                    }
+                });
+
+                switch (field) {
+                    case 'acceptStore': 
+                    break;
+                    case 'price': 
+                    break;
+                    case 'complete': 
+                    break;
+                    case 'cpltime': 
+                    break;
+                    default: {
+                        field = 'accepttime';
+                    } break;
+                }
+                sort = sort == "1" ? "" : "DESC";
+                let sqlSel = `SELECT _id, ordernum, user, phone, (SELECT name FROM member WHERE _id=accept) AS accept, (SELECT name FROM store WHERE _id=acceptStore) AS acceptStore, accepttime, (SELECT mark FROM clothes WHERE _id=cloth) AS mark, price, complete, cpltime, cpler, del FROM orderform WHERE del=?`;
+                if (level != 99) {
+                    sqlCnt += ` AND acceptStore=(SELECT store FROM member WHERE _id=${uid})`;
+                }
+                sqlSel += ` ORDER BY ${field} ${sort} LIMIT ?, ?`;
+                MySQL.Query(sqlSel, [1, (pno - 1) * pageSize, pageSize], (err, result) => {
+                    if (err) throw err;
+                    if (result && result.length >= 0) {
+                        rspData["items"] = result;
+                        NS.Send(res, NS.Build(200, "查询成功", rspData));
+                    } else {
+                        NS.Send(res, NS.Build(406, "参数错误"));
+                    }
                 })
             } break;
             default:

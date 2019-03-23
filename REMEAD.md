@@ -274,11 +274,12 @@
 获取价格表
 ```
     http://192.168.2.108:4449/cloth/getpricelist
-    method: post,
+    method: get,
     param: {
         pno: [number],  // 默认1
         sort: [number],  // 默认-1降序  1是升序
-    }   
+        all: [boolean]       // 默认为false true获取全部
+    }
 ```
 
 删除价格表项目
@@ -299,6 +300,16 @@
         vipPhone: number, 
         color: string,
         typeId: number  // 对应价格表的id
+    }
+```
+
+获取订单列表
+```
+    http://192.168.2.108:4449/orderform/getform
+    method: post,
+    param: {
+        pno: [number] 默认1
+        field: [string] 排序字段 默认为'accepttime',可选'acceptStore','price','complete','cpltime'
     }
 ```
 
