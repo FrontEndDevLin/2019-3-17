@@ -287,7 +287,8 @@
     param: {
         mark: string,   // 备注
         vipPhone: number, 
-        color: string
+        color: string,
+        typeId: number  // 对应价格表的id
     }
 ```
 
@@ -308,7 +309,7 @@
 2. ~~价格表~~(~~可添加~~，~~删除~~)
 
 ### 订单管理
-1. 创建订单
+1. ~~创建订单~~
 2. 查看订单(处理订单)
 
 ### 会员管理

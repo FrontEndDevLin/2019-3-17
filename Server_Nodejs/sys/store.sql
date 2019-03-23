@@ -48,6 +48,7 @@ CREATE Table Orderform(    # 订单
     acceptStore INT NOT NULL,   # 受理点
     accepttime BIGINT,
     cloth INT NOT NULL,
+    price INT NOT NULL,
     complete TINYINT DEFAULT 0,
     cpltime BIGINT DEFAULT 0,
     cpler INT DEFAULT 0,

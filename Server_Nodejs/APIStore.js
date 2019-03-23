@@ -90,7 +90,6 @@ function Store () {
             } break;
             case 'editstore': {
                 if (!NS.MethodFilter(req, res, "post")) return;
-
             } break;
             default:
                 break;

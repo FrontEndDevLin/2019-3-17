@@ -23,8 +23,8 @@ function Orderform() {
             case 'createform': {
                 if (!NS.MethodFilter(req, res, "post")) return;
                 NS.GetPostData(req, (postParam) => {
-                    let mark = postParam["mark"], phone = postParam["vipPhone"], color = postParam["color"];
-                    if (!mark || !phone || !color) {
+                    let mark = postParam["mark"], phone = postParam["vipPhone"], color = postParam["color"], type = postParam["typeId"];
+                    if (!mark || !phone || !color || !type) {
                         return NS.Send(res, NS.Build(400, "缺少参数"))
                     }
                     let vname, vid;
@@ -34,31 +34,42 @@ function Orderform() {
                         if (result && result.length) {
                             vname = result[0]["name"];
                             vid = result[0]["_id"];
-                            let clothSql = "INSERT INTO clothes VALUES(NULL, 0, ?, ?, ?, DEFAULT)";
-                            MySQL.Query(clothSql, [mark, color, vid], (err, result) => {
+
+                            let priceSql = "SELECT price FROM commodit WHERE _id=?";
+                            MySQL.Query(priceSql, [type], (err, result) => {
                                 if (err) throw err;
-                                if (result && result.affectedRows == 1) {
-                                    let storeSql = "SELECT store FROM member WHERE _id=?";
-                                    let clothId = result.insertId;
-                                    MySQL.Query(storeSql, [uid], (err, result) => {
+                                if (result && result[0]) {
+                                    let price = result[0]["price"];
+
+                                    let clothSql = "INSERT INTO clothes VALUES(NULL, ?, ?, ?, ?, DEFAULT)";
+                                    MySQL.Query(clothSql, [type, mark, color, vid], (err, result) => {
                                         if (err) throw err;
-                                        if (result && result[0]) {
-                                            let storeId = result[0]["store"];
-                                            let formSql = "INSERT INTO orderform VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, DEFAULT, DEFAULT, DEFAULT, DEFAULT)";
-                                            MySQL.Query(formSql, [NS.GetRandomStr(), vname, phone, uid, storeId, new Date().getTime(), clothId], (err, result) => {
+                                        if (result && result.affectedRows == 1) {
+                                            let storeSql = "SELECT store FROM member WHERE _id=?";
+                                            let clothId = result.insertId;
+                                            MySQL.Query(storeSql, [uid], (err, result) => {
                                                 if (err) throw err;
-                                                if (result.affectedRows == 1) {
-                                                    NS.Send(res, NS.Build(200, "订单创建成功"))
+                                                if (result && result[0]) {
+                                                    let storeId = result[0]["store"];
+                                                    let formSql = "INSERT INTO orderform VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, DEFAULT, DEFAULT, DEFAULT, DEFAULT)";
+                                                    MySQL.Query(formSql, [NS.GetRandomStr(), vname, phone, uid, storeId, new Date().getTime(), clothId, price], (err, result) => {
+                                                        if (err) throw err;
+                                                        if (result.affectedRows == 1) {
+                                                            NS.Send(res, NS.Build(200, "订单创建成功"))
+                                                        } else {
+                                                            NS.Send(res, NS.Build(406, "未知错误3"))
+                                                        }
+                                                    })
                                                 } else {
-                                                    NS.Send(res, NS.Build(406, "未知错误3"))
+                                                    NS.Send(res, NS.Build(406, "未知错误2"))
                                                 }
                                             })
                                         } else {
-                                            NS.Send(res, NS.Build(406, "未知错误2"))
+                                            NS.Send(res, NS.Build(406, "未知错误1"))
                                         }
                                     })
                                 } else {
-                                    NS.Send(res, NS.Build(406, "未知错误1"))
+                                    NS.Send(res, NS.Build(403, "请先添加价格表"))
                                 }
                             })
                         } else {
