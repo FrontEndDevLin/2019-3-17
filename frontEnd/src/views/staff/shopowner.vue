@@ -11,7 +11,7 @@
 
 		<!--列表-->
 		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-			<el-table-column type="id" width="0">
+			<el-table-column type="id" width="10">
 			</el-table-column>
 			<el-table-column type="index" width="60">
 			</el-table-column>
@@ -102,10 +102,14 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="所属店铺编号" prop="storeId">
-					<el-input v-model="addForm.storeId" auto-complete="off"></el-input>
-          <p>可选店铺编号：
-            <span v-for="(item,index) in shop" :key="index">{{item}} ,</span>
-          </p>
+					<el-select v-model="addForm.storeId" placeholder="请选择">
+            <el-option
+              v-for="(item,index) in shop"
+              :key="index"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -290,7 +294,10 @@ export default {
             this.addFormVisible = true;
             this.shop = [];
             for (let i = 0; i < res.data.length; i++) {
-              this.shop.push(res.data[i]._id);
+              this.shop.push({
+                name: res.data[i].name,
+                id: res.data[i]._id.toString()
+              });
             }
           } else {
             this.$message({

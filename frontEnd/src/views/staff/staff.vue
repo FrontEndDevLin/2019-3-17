@@ -11,7 +11,7 @@
 
 		<!--列表-->
 		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-			<el-table-column type="id" width="0">
+			<el-table-column type="id" width="10">
 			</el-table-column>
 			<el-table-column type="index" width="60">
 			</el-table-column>
@@ -102,10 +102,14 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="所属店铺编号" prop="storeId">
-					<el-input v-model="addForm.storeId" auto-complete="off"></el-input>
-          <p>可选店铺编号：
-            <span v-for="(item,index) in shop" :key="index">{{item}} ,</span>
-          </p>
+          <el-select v-model="addForm.storeId" placeholder="请选择">
+            <el-option
+              v-for="(item,index) in shop"
+              :key="index"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -164,7 +168,7 @@ export default {
         newPhone: 0,
         gender: "",
         salary: "",
-        indet:'staff'
+        indet: "staff"
       },
 
       addFormVisible: false, //新增界面是否显示
@@ -181,7 +185,7 @@ export default {
         ],
         pwd: [{ required: true, message: "请输入密码", trigger: "blur" }],
         storeId: [
-          { required: true,message: "请输入可选店铺编号", trigger: "blur" }
+          { required: true, message: "请输入可选店铺编号", trigger: "blur" }
         ]
       },
       //新增界面数据
@@ -191,7 +195,7 @@ export default {
         pwd: "",
         storeId: "",
         ident: "staff",
-        gender:1
+        gender: 1
       },
       canaddstaff: false,
       shop: []
@@ -232,7 +236,7 @@ export default {
                 ident: "staff"
               });
             }
-            console.log(this.users)
+            console.log(this.users);
           } else {
             this.$message({
               message: res.msg,
@@ -240,7 +244,7 @@ export default {
             });
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.listLoading = false;
           console.log(err);
         });
@@ -282,15 +286,18 @@ export default {
     },
     //显示新增界面
     handleAdd: function() {
-      httpGet("/staff/canaddstaff",{ident: 'staff'})
+      httpGet("/staff/canaddstaff", { ident: "staff" })
         .then(res => {
-          // console.log(res)
+          console.log(res);
           this.addLoading = false;
           if (res.code == 200) {
             this.addFormVisible = true;
             this.shop = [];
             for (let i = 0; i < res.data.length; i++) {
-              this.shop.push(res.data[i]._id);
+              this.shop.push({
+                name: res.data[i].name,
+                id: res.data[i]._id.toString()
+              });
             }
           } else {
             this.$message({
@@ -312,29 +319,30 @@ export default {
             this.editLoading = true;
             let para = Object.assign({}, this.editForm);
             console.log(para);
-            httpPost("/staff/editstaff", para).then(res => {
-              console.log("edit", res);
-              this.editLoading = false;
-              this.editFormVisible = false;
-              if (res.code == 200) {
-                this.$message({
-                  message: res.msg,
-                  type: "success"
-                });
-                this.$refs["editForm"].resetFields();
-                this.getUsers(this.page);
-              } else {
-                this.$message({
-                  message: res.msg,
-                  type: "warning"
-                });
-              }
-            })
-            .catch(err=>{
-              console.log(err)
-              this.editLoading = false;
-              this.editFormVisible = false;
-            });
+            httpPost("/staff/editstaff", para)
+              .then(res => {
+                console.log("edit", res);
+                this.editLoading = false;
+                this.editFormVisible = false;
+                if (res.code == 200) {
+                  this.$message({
+                    message: res.msg,
+                    type: "success"
+                  });
+                  this.$refs["editForm"].resetFields();
+                  this.getUsers(this.page);
+                } else {
+                  this.$message({
+                    message: res.msg,
+                    type: "warning"
+                  });
+                }
+              })
+              .catch(err => {
+                console.log(err);
+                this.editLoading = false;
+                this.editFormVisible = false;
+              });
           });
         }
       });
@@ -376,7 +384,7 @@ export default {
     },
     selsChange: function(sels) {
       this.sels = sels;
-    },
+    }
   },
   mounted() {
     this.getUsers(this.page);
