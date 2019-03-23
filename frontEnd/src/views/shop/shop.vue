@@ -24,7 +24,7 @@
           <span>{{new Date(parseInt(scope.row.time)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
         </template>
 			</el-table-column>
-			<el-table-column prop="shopowner" label="店铺店长" min-width="120" sortable>
+			<el-table-column prop="owname" label="店铺店长" min-width="120" sortable>
 			</el-table-column>
 			<el-table-column prop="dec" label="店铺简介" min-width="180" sortable>
 			</el-table-column>
@@ -149,7 +149,8 @@ export default {
                 vid: res.data.items[i]._id,
                 newName: res.data.items[i].name,
                 time: res.data.items[i].rgt,
-                dec: res.data.items[i].intro
+                dec: res.data.items[i].intro,
+                owname: res.data.items[i].owname
               });
             }
           } else {
@@ -169,13 +170,11 @@ export default {
       this.$confirm("确认删除该记录吗?", "提示", {
         type: "warning"
       })
-        .then(() => {
+        .then((res) => {
           this.listLoading = true;
-          
           let para = { id: row.id };
           removeUser(para).then(res => {
             this.listLoading = false;
-            
             this.$message({
               message: "删除成功",
               type: "success"
@@ -183,7 +182,10 @@ export default {
             this.getUsers();
           });
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.log(err)
+          this.listLoading = false;
+        });
     },
     //显示编辑界面
     handleEdit: function(index, row) {
@@ -200,23 +202,20 @@ export default {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.editLoading = true;
-            
-            let para = Object.assign({}, this.editForm);
-            para.time =
-              !para.time || para.time == ""
-                ? ""
-                : util.formatDate.format(new Date(para.time), "yyyy-MM-dd");
             editUser(para).then(res => {
-              this.editLoading = false;
-              
+              this.editLoading = false;              
               this.$message({
-                message: "提交成功",
+                message: res.msg,
                 type: "success"
               });
               this.$refs["editForm"].resetFields();
               this.editFormVisible = false;
               this.getUsers();
             });
+          })
+          .catch(err=>{
+            console.log(err)
+            this.editLoading = false;     
           });
         }
       });

@@ -229,7 +229,7 @@ export default {
       this.$confirm("确认删除该记录吗?", "提示", {
         type: "warning"
       })
-        .then(() => {
+        .then((res) => {
           this.listLoading = true;
           let para = { vid: row.vid };
           // console.log(para)
@@ -238,7 +238,7 @@ export default {
             this.listLoading = false;
             if (res.code == 200) {
               this.$message({
-                message: "删除成功",
+                message: res.msg,
                 type: "success"
               });
               this.getUsers(this.page, this.currentFiled, this.currentSort);
@@ -250,7 +250,10 @@ export default {
             }
           });
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.log(err)
+          this.listLoading = false;
+        });
     },
     //显示编辑界面
     handleEdit(index, row) {
@@ -283,6 +286,11 @@ export default {
                   type: "warning"
                 });
               }
+            })
+            .catch(err=>{
+              console.log(err)
+              this.editLoading = false;
+              this.editFormVisible = false;
             });
           });
         }
