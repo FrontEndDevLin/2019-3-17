@@ -319,7 +319,6 @@ export default {
                 message: res.msg,
                 type: "success"
               });
-              this.$refs["editForm"].resetFields();
               this.getUsers(this.page,this.sort);
             } else {
               this.editLoading = false;
