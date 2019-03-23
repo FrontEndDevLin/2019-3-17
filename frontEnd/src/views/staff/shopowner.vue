@@ -4,12 +4,6 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
 				<el-form-item>
-					<el-input v-model="filters.name" placeholder="姓名"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" v-on:click="getUsers">查询</el-button>
-				</el-form-item>
-				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
 				</el-form-item>
 			</el-form>
@@ -72,15 +66,24 @@
 				<el-form-item label="员工名称" prop="name">
 					<el-input v-model="addForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="入职日期">
-					<el-input-number v-model="editForm.price" :min="0" :max="200"></el-input-number>
+				<el-form-item label="员工电话" prop="phone">
+					<el-input v-model="addForm.phone" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="有效日期">
-					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.time"></el-date-picker>
+				<el-form-item label="员工密码" prop="pwd">
+					<el-input v-model="addForm.pwd" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="备注">
-					<el-input type="textarea" v-model="addForm.dec"></el-input>
+				<el-form-item label="所属店铺编号" prop="storeId">
+					<el-input v-model="addForm.storeId" auto-complete="off"></el-input>
+          <p>可选店铺编号：
+            <span v-for="(item,index) in shop" :key="index">{{item}} ,</span>
+          </p>
 				</el-form-item>
+				<!-- <el-form-item label="员工身份">
+					<el-radio-group v-model="addForm.ident">
+						<el-radio class="radio" :label="'staff'">员工</el-radio>
+						<el-radio class="radio" :label="'manager'">店长</el-radio>
+					</el-radio-group>
+				</el-form-item> -->
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="addFormVisible = false">取消</el-button>
@@ -99,7 +102,8 @@ import {
   batchRemoveUser,
   editUser,
   addUser,
-  httpGet
+  httpGet,
+  httpPost
 } from "../../api/api";
 
 export default {
@@ -131,15 +135,30 @@ export default {
       addFormVisible: false, //新增界面是否显示
       addLoading: false,
       addFormRules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        phone: [
+          {
+            required: true,
+            pattern: /^1\d{10}$/,
+            message: "手机号格式不正确",
+            trigger: "blur"
+          }
+        ],
+        pwd: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        storeId: [
+          { required: true,message: "请输入可选店铺编号", trigger: "blur" }
+        ]
       },
       //新增界面数据
       addForm: {
         name: "",
-        price: 0,
-        time: "",
-        dec: ""
-      }
+        phone: "",
+        pwd: "",
+        storeId: "",
+        ident: "manager"
+      },
+      canaddstaff: false,
+      shop: []
     };
   },
   methods: {
@@ -153,18 +172,6 @@ export default {
     },
     //获取用户列表
     getUsers() {
-      //   let para = {
-      //     page: this.page,
-      //     name: this.filters.name
-      //   };
-      //   this.listLoading = true;
-      //   
-      //   getUserListPage(para).then(res => {
-      //     this.total = res.data.total;
-      //     this.users = res.data.users;
-      //     this.listLoading = false;
-      //     
-      //   });
       this.total = 1; //delete
       this.listLoading = false;
       this.users = []; //delete
@@ -183,20 +190,6 @@ export default {
           })
         );
       }
-
-      //   let param = {
-      //     title: "长袖", // unique
-      //     price: 20, // default 10
-      //     type: 0 // default 0  0代表织物类 基本只有这个
-      //   };
-
-      //   httpGet("/cloth/addcommodit",param)
-      //   .then(res => {
-      // 	  console.log('cloth/addcommodit',res)
-      //   })
-      //   .catch( ()=>{
-      // 	  this.listLoading = false;
-      //   });
     },
     //删除
     handleDel: function(index, row) {
@@ -205,11 +198,11 @@ export default {
       })
         .then(() => {
           this.listLoading = true;
-          
+
           let para = { id: row.id };
           removeUser(para).then(res => {
             this.listLoading = false;
-            
+
             this.$message({
               message: "删除成功",
               type: "success"
@@ -226,14 +219,27 @@ export default {
     },
     //显示新增界面
     handleAdd: function() {
-      this.addFormVisible = true;
-      this.addForm = {
-        name: "",
-        sex: -1,
-        age: 0,
-        time: "",
-        dec: ""
-      };
+      httpGet("/staff/canaddstaff")
+        .then(res => {
+          // console.log(res)
+          this.addLoading = false;
+          if (res.code == 200) {
+            this.addFormVisible = true;
+            this.shop = [];
+            for (let i = 0; i < res.data.length; i++) {
+              this.shop.push(res.data[i]._id);
+            }
+          } else {
+            this.$message({
+              message: res.msg,
+              type: "warning"
+            });
+          }
+        })
+        .catch(err => {
+          this.addLoading = false;
+          console.log(err);
+        });
     },
     //编辑
     editSubmit: function() {
@@ -241,7 +247,7 @@ export default {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.editLoading = true;
-            
+
             let para = Object.assign({}, this.editForm);
             para.time =
               !para.time || para.time == ""
@@ -249,7 +255,7 @@ export default {
                 : util.formatDate.format(new Date(para.time), "yyyy-MM-dd");
             editUser(para).then(res => {
               this.editLoading = false;
-              
+
               this.$message({
                 message: "提交成功",
                 type: "success"
@@ -268,37 +274,31 @@ export default {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.addLoading = true;
-            
-            // let para = Object.assign({}, this.addForm);
-            // para.time =
-            //   !para.time || para.time == ""
-            //     ? ""
-            //     : util.formatDate.format(new Date(para.time), "yyyy-MM-dd");
-            // addUser(para).then(res => {
-            //   this.addLoading = false;
-            //   
-            //   this.$message({
-            //     message: "提交成功",
-            //     type: "success"
-            //   });
-            //   this.$refs["addForm"].resetFields();
-            //   this.addFormVisible = false;
-            //   this.getUsers();
-            // });
-            let param = {
-              title: "长袖", // unique
-              price: 20, // default 10
-              type: 0 // default 0  0代表织物类 基本只有这个
-            };
-			httpGet("/cloth/addcommodit",param)
-			.then((res)=>{
-				this.addLoading = false;
-				console.log(33,res)
-			})
-			.catch((err)=>{
-				this.addLoading = false;
-				console.log(err)
-			});
+            // console.log('addForm staff',this.addForm)
+            httpPost("/staff/addstaff", this.addForm)
+              .then(res => {
+                console.log(" staff", res);
+                this.addFormVisible = false;
+                this.addLoading = false;
+                if (res.code == 200) {
+                  this.$message({
+                    message: res.msg,
+                    type: "success"
+                  });
+                  this.$refs["addForm"].resetFields();
+                  // this.getUsers(this.page);
+                } else {
+                  this.$message({
+                    message: res.msg,
+                    type: "warning"
+                  });
+                }
+              })
+              .catch(err => {
+                this.addLoading = false;
+                this.addFormVisible = false;
+                console.log(err);
+              });
           });
         }
       });
@@ -314,11 +314,11 @@ export default {
       })
         .then(() => {
           this.listLoading = true;
-          
+
           let para = { ids: ids };
           batchRemoveUser(para).then(res => {
             this.listLoading = false;
-            
+
             this.$message({
               message: "删除成功",
               type: "success"
