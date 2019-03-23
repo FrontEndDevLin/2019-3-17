@@ -81,17 +81,6 @@
 ```
 
 ## API
-添加价格表项目
-```
-    http://192.168.2.108:4449/cloth/addcommodit
-    method: get
-    param: {
-        title: '长袖', // unique
-        price: 20,   // default 10
-        type: 0     // default 0  0代表织物类 基本只有这个
-    }
-```
-
 登录
 ```
     http://192.168.2.108:4449/auth/login
@@ -269,6 +258,27 @@
     param: {
         id: number
     }
+```
+
+添加价格表项目
+```
+    http://192.168.2.108:4449/cloth/addcommodit
+    method: get
+    param: {
+        title: '长袖', // unique
+        price: 20,   // default 10
+        type: 0     // default 0  0代表织物类 基本只有这个
+    }
+```
+
+获取价格表
+```
+    http://192.168.2.108:4449/cloth/getpricelist
+    method: post,
+    param: {
+        pno: [number],  // 默认1
+        sort: [number],  // 默认-1降序  1是升序
+    }   
 ```
 
 删除价格表项目
