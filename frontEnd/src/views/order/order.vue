@@ -15,45 +15,45 @@
 			</el-table-column>
 			<el-table-column type="index" min-width="60">
 			</el-table-column>
-			<el-table-column prop="user" label="客户名字" min-width="120">
+			<el-table-column prop="user" label="客户名字" min-width="100">
 			</el-table-column>
-			<el-table-column prop="phone" label="客户电话" min-width="120">
+			<el-table-column prop="phone" label="客户电话" min-width="100">
 			</el-table-column>
-			<el-table-column prop="ordernum" label="订单单号" min-width="120">
+			<el-table-column prop="ordernum" label="订单单号" min-width="100">
 			</el-table-column>
-			<el-table-column prop="price" label="价格" min-width="120">
+			<el-table-column prop="price" label="价格" min-width="80">
 			</el-table-column>
-			<el-table-column prop="color" label="颜色" min-width="120">
+			<el-table-column prop="color" label="颜色" min-width="100">
 			</el-table-column>
-			<el-table-column prop="mark" label="备注" min-width="120">
+			<el-table-column prop="mark" label="备注" min-width="80">
 			</el-table-column>
-			<el-table-column prop="acceptStore" label="受理店铺" min-width="120">
+			<el-table-column prop="acceptStore" label="受理店铺" min-width="100">
 			</el-table-column>
-			<el-table-column prop="accept" label="受理人" min-width="120">
+			<el-table-column prop="accept" label="受理人" min-width="80">
 			</el-table-column>
-			<el-table-column prop="accepttime" label="下单时间" min-width="120">
+			<el-table-column prop="accepttime" label="下单时间" min-width="100">
         <template slot-scope="scope">
           <span>{{new Date(parseInt(scope.row.accepttime)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
         </template>
 			</el-table-column>
-			<el-table-column prop="complete" label="是否完成" min-width="120">
+			<el-table-column prop="complete" label="是否完成" min-width="100">
         <template slot-scope="scope">
           <span>{{scope.row.complete==0?'未完成':'已完成'}}</span>
         </template>
 			</el-table-column>
-			<el-table-column prop="cpltime" label="完成时间" min-width="120">
+			<el-table-column prop="cpltime" label="完成时间" min-width="100">
         <template slot-scope="scope">
           <span>{{scope.row.cpltime==0?'未完成':new Date(parseInt(scope.row.cpltime)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
         </template>
 			</el-table-column>
-			<el-table-column prop="cpler" label="负责人" min-width="120">
+			<el-table-column prop="cpler" label="负责人" min-width="80">
         <template slot-scope="scope">
           <span>{{scope.row.cpler==0?'':scope.row.cpler}}</span>
         </template>
 			</el-table-column>
 			<el-table-column label="操作" min-width="150">
 				<template slot-scope="scope">
-					<el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">完成</el-button>
+					<el-button v-if="scope.row.complete==0" type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">完成</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -153,22 +153,7 @@ export default {
       listLoading: false,
       sels: [], //列表选中列
 
-      editFormVisible: false, //编辑界面是否显示
       editLoading: false,
-      // editFormRules: {
-      //   newName: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-      //   newnewPhone: [
-      //     {
-      //       required: true,
-      //       pattern: /^1\d{10}$/,
-      //       message: "手机号格式不正确",
-      //       trigger: "blur"
-      //     }
-      //   ],
-      //   gender: [{ required: true, message: "请选择性别", trigger: "blur" }],
-      //   salary: [{ required: true, message: "请输入工资", trigger: "blur" }],
-      //   ident: [{ required: true, message: "请选择身份", trigger: "blur" }]
-      // },
       //编辑界面数据
       editForm: {
         id: 0

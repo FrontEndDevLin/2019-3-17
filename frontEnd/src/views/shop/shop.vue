@@ -15,18 +15,18 @@
 			</el-table-column>
 			<el-table-column type="index" min-width="40">
 			</el-table-column>
-			<el-table-column prop="newName" label="店铺名称" min-width="120" sortable>
+			<el-table-column prop="newName" label="店铺名称" min-width="120">
 			</el-table-column>
-			<el-table-column prop="vid" label="店铺编号" min-width="120" sortable>
+			<el-table-column prop="vid" label="店铺编号" min-width="120">
 			</el-table-column>
-			<el-table-column prop="time" label="开店日期" min-width="180" sortable>
+			<el-table-column prop="time" label="开店日期" min-width="180">
         <template slot-scope="scope">
           <span>{{new Date(parseInt(scope.row.time)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
         </template>
 			</el-table-column>
-			<el-table-column prop="owname" label="店铺店长" min-width="120" sortable>
+			<el-table-column prop="owname" label="店铺店长" min-width="120">
 			</el-table-column>
-			<el-table-column prop="dec" label="店铺简介" min-width="180" sortable>
+			<el-table-column prop="dec" label="店铺简介" min-width="180">
 			</el-table-column>
 			<el-table-column label="操作" min-width="200">
 				<template slot-scope="scope">
