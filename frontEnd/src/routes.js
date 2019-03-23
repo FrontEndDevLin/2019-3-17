@@ -63,16 +63,16 @@ let routes = [
             { path: '/user', component: userPage, name: '个人资料' }
         ]
     },
-    {
-        path: '/',
-        component: Home,
-        name: '',
-        iconCls: 'fa fa-history',
-        leaf: true,//只有一个节点
-        children: [
-            { path: '/history', component: historyPage, name: '历史统计' }
-        ]
-    },
+    // {
+    //     path: '/',
+    //     component: Home,
+    //     name: '',
+    //     iconCls: 'fa fa-history',
+    //     leaf: true,//只有一个节点
+    //     children: [
+    //         { path: '/history', component: historyPage, name: '历史统计' }
+    //     ]
+    // },
     {
         path: '/',
         component: Home,
@@ -131,7 +131,7 @@ let routes = [
         name: '网站管理',
         iconCls: 'fa fa-cubes',
         children: [
-            { path: '/web_advertise', component: webAdvertise, name: '网站信息' },
+            // { path: '/web_advertise', component: webAdvertise, name: '网站信息' },
             { path: '/web_all', component: webAll, name: '全体通知' },
             { path: '/web_shop', component: webShop, name: '店铺通知' },
         ]

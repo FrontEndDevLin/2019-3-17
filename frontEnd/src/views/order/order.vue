@@ -53,7 +53,7 @@
 			</el-table-column>
 			<el-table-column label="操作" min-width="150">
 				<template slot-scope="scope">
-					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+					<el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">完成</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -66,7 +66,7 @@
 		</el-col>
 
 		<!--编辑界面-->
-		<el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
+		<!-- <el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
 			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
 				<el-form-item label="员工名称" prop="name">
 					<el-input v-model="editForm.newName" auto-complete="off"></el-input>
@@ -94,7 +94,7 @@
 				<el-button @click.native="editFormVisible = false">取消</el-button>
 				<el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
 			</div>
-		</el-dialog>
+		</el-dialog> -->
 
 		<!--新增界面-->
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
@@ -155,28 +155,23 @@ export default {
 
       editFormVisible: false, //编辑界面是否显示
       editLoading: false,
-      editFormRules: {
-        newName: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        newnewPhone: [
-          {
-            required: true,
-            pattern: /^1\d{10}$/,
-            message: "手机号格式不正确",
-            trigger: "blur"
-          }
-        ],
-        gender: [{ required: true, message: "请选择性别", trigger: "blur" }],
-        salary: [{ required: true, message: "请输入工资", trigger: "blur" }],
-        ident: [{ required: true, message: "请选择身份", trigger: "blur" }]
-      },
+      // editFormRules: {
+      //   newName: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+      //   newnewPhone: [
+      //     {
+      //       required: true,
+      //       pattern: /^1\d{10}$/,
+      //       message: "手机号格式不正确",
+      //       trigger: "blur"
+      //     }
+      //   ],
+      //   gender: [{ required: true, message: "请选择性别", trigger: "blur" }],
+      //   salary: [{ required: true, message: "请输入工资", trigger: "blur" }],
+      //   ident: [{ required: true, message: "请选择身份", trigger: "blur" }]
+      // },
       //编辑界面数据
       editForm: {
-        id: 0,
-        newName: "",
-        newPhone: 0,
-        gender: "",
-        salary: "",
-        indet: "staff"
+        id: 0
       },
 
       addFormVisible: false, //新增界面是否显示
@@ -288,11 +283,6 @@ export default {
           console.log(err);
         });
     },
-    //显示编辑界面
-    handleEdit: function(index, row) {
-      this.editFormVisible = true;
-      this.editForm = Object.assign({}, row);
-    },
     //显示新增界面
     handleAdd: function() {
       httpGet("/cloth/getpricelist", { all: true })
@@ -329,39 +319,35 @@ export default {
         });
     },
     //编辑
-    editSubmit() {
-      this.$refs.editForm.validate(valid => {
-        if (valid) {
-          this.$confirm("确认提交吗？", "提示", {}).then(() => {
-            this.editLoading = true;
-            let para = Object.assign({}, this.editForm);
-            console.log(para);
-            httpPost("/staff/editstaff", para)
-              .then(res => {
-                console.log("edit", res);
-                this.editLoading = false;
-                this.editFormVisible = false;
-                if (res.code == 200) {
-                  this.$message({
-                    message: res.msg,
-                    type: "success"
-                  });
-                  this.$refs["editForm"].resetFields();
-                  this.getUsers(this.page,this.sort);
-                } else {
-                  this.$message({
-                    message: res.msg,
-                    type: "warning"
-                  });
-                }
-              })
-              .catch(err => {
-                console.log(err);
-                this.editLoading = false;
-                this.editFormVisible = false;
+    handleEdit(index, row) {
+      this.editForm ={id:row._id};
+      console.log('id',this.editForm)
+      this.$confirm("确认提交吗？", "提示", {}).then(() => {
+        this.editLoading = true;
+        console.log('order edit',this.editForm);
+        httpGet("/orderform/endform", this.editForm)
+          .then(res => {
+            console.log("edit", res);
+            this.editLoading = false;
+            if (res.code == 200) {
+              this.$message({
+                message: res.msg,
+                type: "success"
               });
+              this.$refs["editForm"].resetFields();
+              this.getUsers(this.page,this.sort);
+            } else {
+              this.editLoading = false;
+              this.$message({
+                message: res.msg,
+                type: "warning"
+              });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            this.editLoading = false;
           });
-        }
       });
     },
     //新增
