@@ -13,34 +13,47 @@
 		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
 			<el-table-column type="id" width="10">
 			</el-table-column>
-			<el-table-column type="index" width="60">
+			<el-table-column type="index" min-width="60">
 			</el-table-column>
-			<el-table-column prop="newName" label="员工名称" width="120">
+			<el-table-column prop="user" label="客户名字" min-width="100">
 			</el-table-column>
-			<el-table-column prop="avatar" label="头像" width="100">
+			<el-table-column prop="phone" label="客户电话" min-width="100">
+			</el-table-column>
+			<el-table-column prop="ordernum" label="订单单号" min-width="100">
+			</el-table-column>
+			<el-table-column prop="price" label="价格" min-width="80">
+			</el-table-column>
+			<el-table-column prop="color" label="颜色" min-width="100">
+			</el-table-column>
+			<el-table-column prop="mark" label="备注" min-width="80">
+			</el-table-column>
+			<el-table-column prop="acceptStore" label="受理店铺" min-width="100">
+			</el-table-column>
+			<el-table-column prop="accept" label="受理人" min-width="80">
+			</el-table-column>
+			<el-table-column prop="accepttime" label="下单时间" min-width="100">
         <template slot-scope="scope">
-          <img class="owner-avatar" :src="scope.row.avatar" alt="">
+          <span>{{new Date(parseInt(scope.row.accepttime)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
         </template>
 			</el-table-column>
-			<el-table-column prop="newPhone" label="电话" min-width="120">
-			</el-table-column>
-			<el-table-column prop="gender" label="性别" min-width="80">
+			<el-table-column prop="complete" label="是否完成" min-width="100">
         <template slot-scope="scope">
-					<span>{{scope.row.gender==2?'女':scope.row.gender==1?'男':'未知'}}</span>
-				</template>
-			</el-table-column>
-			<el-table-column prop="salary" label="工资" min-width="120">
-			</el-table-column>
-			<el-table-column prop="storename" label="所属店铺" width="120">
-			</el-table-column>
-			<el-table-column prop="time" label="入职日期" min-width="120">
-        <template slot-scope="scope">
-          <span>{{new Date(parseInt(scope.row.time)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
+          <span>{{scope.row.complete==0?'未完成':'已完成'}}</span>
         </template>
 			</el-table-column>
-			<el-table-column label="操作" width="150">
+			<el-table-column prop="cpltime" label="完成时间" min-width="100">
+        <template slot-scope="scope">
+          <span>{{scope.row.cpltime==0?'未完成':new Date(parseInt(scope.row.cpltime)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
+        </template>
+			</el-table-column>
+			<el-table-column prop="cpler" label="负责人" min-width="80">
+        <template slot-scope="scope">
+          <span>{{scope.row.cpler==0?'':scope.row.cpler}}</span>
+        </template>
+			</el-table-column>
+			<el-table-column label="操作" min-width="150">
 				<template slot-scope="scope">
-					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+					<el-button v-if="scope.row.complete==0" type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">完成</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
@@ -53,7 +66,7 @@
 		</el-col>
 
 		<!--编辑界面-->
-		<el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
+		<!-- <el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
 			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
 				<el-form-item label="员工名称" prop="name">
 					<el-input v-model="editForm.newName" auto-complete="off"></el-input>
@@ -81,7 +94,7 @@
 				<el-button @click.native="editFormVisible = false">取消</el-button>
 				<el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
 			</div>
-		</el-dialog>
+		</el-dialog> -->
 
 		<!--新增界面-->
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
@@ -136,33 +149,14 @@ export default {
       users: [],
       total: 0,
       page: 1,
+      sort:'accepttime',//排序字段 默认为'accepttime',可选'acceptStore','price','complete','cpltime'
       listLoading: false,
       sels: [], //列表选中列
 
-      editFormVisible: false, //编辑界面是否显示
       editLoading: false,
-      editFormRules: {
-        newName: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        newnewPhone: [
-          {
-            required: true,
-            pattern: /^1\d{10}$/,
-            message: "手机号格式不正确",
-            trigger: "blur"
-          }
-        ],
-        gender: [{ required: true, message: "请选择性别", trigger: "blur" }],
-        salary: [{ required: true, message: "请输入工资", trigger: "blur" }],
-        ident: [{ required: true, message: "请选择身份", trigger: "blur" }]
-      },
       //编辑界面数据
       editForm: {
-        id: 0,
-        newName: "",
-        newPhone: 0,
-        gender: "",
-        salary: "",
-        indet: "staff"
+        id: 0
       },
 
       addFormVisible: false, //新增界面是否显示
@@ -198,46 +192,51 @@ export default {
     },
     handleCurrentChange(val) {
       this.page = val;
-      this.getUsers(this.page);
+      this.getUsers(this.page,this.sort);
     },
     //获取用户列表
-    getUsers(page) {
+    getUsers(page,sort) {
       let param = {
-        pno: page // 当前页码 不传的话默认1
+        pno: page ,// 当前页码 不传的话默认1
+        sort: sort
       };
-      // httpGet("/staff/getstafflist", param)
-      //   .then(res => {
-      //     this.listLoading = false;
-      //     if (res.code == 200) {
-      //       console.log("staff list", res);
-      //       this.total = res.data.staffCount;
-      //       this.users = [];
-      //       for (let i = 0; i < res.data.items.length; i++) {
-      //         this.users.push({
-      //           id: res.data.items[i]._id,
-      //           newName: res.data.items[i].name,
-      //           time: res.data.items[i].rgt,
-      //           gender: res.data.items[i].gender,
-      //           newPhone: res.data.items[i].phone,
-      //           salary: res.data.items[i].salary,
-      //           storename: res.data.items[i].storename,
-      //           avatar: res.data.items[i].avatar,
-      //           store: res.data.items[i].store,
-      //           ident: "staff"
-      //         });
-      //       }
-      //       console.log(this.users);
-      //     } else {
-      //       this.$message({
-      //         message: res.msg,
-      //         type: "warning"
-      //       });
-      //     }
-      //   })
-      //   .catch(err => {
-      //     this.listLoading = false;
-      //     console.log(err);
-      //   });
+      httpGet("/orderform/getform", param)
+        .then(res => {
+          this.listLoading = false;
+          if (res.code == 200) {
+            console.log("order list", res);
+            this.total = res.data.formCount;
+            this.users = [];
+            for (let i = 0; i < res.data.items.length; i++) {
+              this.users.push({
+                accept:res.data.items[i].accept,
+                acceptStore:res.data.items[i].acceptStore,
+                accepttime:res.data.items[i].accepttime,
+                color:res.data.items[i].color,
+                complete:res.data.items[i].complete,
+                cpler:res.data.items[i].cpler,
+                cpltime:res.data.items[i].cpltime,
+                del:res.data.items[i].del,
+                mark:res.data.items[i].mark,
+                ordernum:res.data.items[i].ordernum,
+                phone:res.data.items[i].phone,
+                price:res.data.items[i].price,
+                user:res.data.items[i].user,
+                _id:res.data.items[i]._id,
+              });
+            }
+            console.log(this.users);
+          } else {
+            this.$message({
+              message: res.msg,
+              type: "warning"
+            });
+          }
+        })
+        .catch(err => {
+          this.listLoading = false;
+          console.log(err);
+        });
     },
     //删除
     handleDel: function(index, row) {
@@ -255,7 +254,7 @@ export default {
                 message: res.msg,
                 type: "success"
               });
-              this.getUsers(this.page);
+              this.getUsers(this.page,this.sort);
             } else {
               this.$message({
                 message: res.msg,
@@ -269,27 +268,29 @@ export default {
           console.log(err);
         });
     },
-    //显示编辑界面
-    handleEdit: function(index, row) {
-      this.editFormVisible = true;
-      this.editForm = Object.assign({}, row);
-    },
     //显示新增界面
     handleAdd: function() {
       httpGet("/cloth/getpricelist", { all: true })
         .then(res => {
-          console.log("all price", res);
+          console.log("all price", res,res.data.items.length);
           this.addLoading = false;
           if (res.code == 200) {
-            this.addFormVisible = true;
-            this.allPrice = [];
-            for (let i = 0; i < res.data.items.length; i++) {
-              this.allPrice.push({
-                title: res.data.items[i].title,
-                typeId: res.data.items[i]._id.toString()
-              });
+            if(res.data.items.length>0){
+                this.addFormVisible = true;
+                this.allPrice = [];
+                for (let i = 0; i < res.data.items.length; i++) {
+                  this.allPrice.push({
+                    title: res.data.items[i].title,
+                    typeId: res.data.items[i]._id.toString()
+                  });
+                }
+                console.log(this.allPrice);
+            }else{
+              this.$message({
+              message: '请先添加价格参考表',
+              type: "warning"
+            });
             }
-            console.log(this.allPrice);
           } else {
             this.$message({
               message: res.msg,
@@ -303,39 +304,35 @@ export default {
         });
     },
     //编辑
-    editSubmit() {
-      this.$refs.editForm.validate(valid => {
-        if (valid) {
-          this.$confirm("确认提交吗？", "提示", {}).then(() => {
-            this.editLoading = true;
-            let para = Object.assign({}, this.editForm);
-            console.log(para);
-            httpPost("/staff/editstaff", para)
-              .then(res => {
-                console.log("edit", res);
-                this.editLoading = false;
-                this.editFormVisible = false;
-                if (res.code == 200) {
-                  this.$message({
-                    message: res.msg,
-                    type: "success"
-                  });
-                  this.$refs["editForm"].resetFields();
-                  this.getUsers(this.page);
-                } else {
-                  this.$message({
-                    message: res.msg,
-                    type: "warning"
-                  });
-                }
-              })
-              .catch(err => {
-                console.log(err);
-                this.editLoading = false;
-                this.editFormVisible = false;
+    handleEdit(index, row) {
+      this.editForm ={id:row._id};
+      console.log('id',this.editForm)
+      this.$confirm("确认提交吗？", "提示", {}).then(() => {
+        this.editLoading = true;
+        console.log('order edit',this.editForm);
+        httpGet("/orderform/endform", this.editForm)
+          .then(res => {
+            console.log("edit", res);
+            this.editLoading = false;
+            if (res.code == 200) {
+              this.$message({
+                message: res.msg,
+                type: "success"
               });
+              this.$refs["editForm"].resetFields();
+              this.getUsers(this.page,this.sort);
+            } else {
+              this.editLoading = false;
+              this.$message({
+                message: res.msg,
+                type: "warning"
+              });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            this.editLoading = false;
           });
-        }
       });
     },
     //新增
@@ -356,7 +353,7 @@ export default {
                     type: "success"
                   });
                   this.$refs["addForm"].resetFields();
-                  this.getUsers(this.page);
+                  this.getUsers(this.page,this.sort);
                 } else {
                   this.$message({
                     message: res.msg,
@@ -378,7 +375,7 @@ export default {
     }
   },
   mounted() {
-    this.getUsers(this.page);
+    this.getUsers(this.page,this.sort);
   }
 };
 </script>
