@@ -56,7 +56,7 @@ CREATE Table Orderform(    # 订单
     del TINYINT DEFAULT 1
 );
 
-CREATE Table Commodit(     # 价格表
+CREATE Table Commodit(     # 价格表~
     _id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(16),
     price SMALLINT DEFAULT 10,
@@ -70,6 +70,7 @@ CREATE Table Clothes(
     mark VARCHAR(128) DEFAULT '',
     color VARCHAR(32) DEFAULT '',
     vipid INT NOT NULL,
+    complete TINYINT DEFAULT 1,
     del TINYINT DEFAULT 1
 );
 

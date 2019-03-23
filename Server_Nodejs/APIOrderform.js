@@ -42,7 +42,7 @@ function Orderform() {
                                 if (result && result[0]) {
                                     let price = result[0]["price"], title = result[0]["title"];
 
-                                    let clothSql = "INSERT INTO clothes VALUES(NULL, ?, ?, ?, ?, DEFAULT)";
+                                    let clothSql = "INSERT INTO clothes VALUES(NULL, ?, ?, ?, ?,DEFAULT, DEFAULT)";
                                     MySQL.Query(clothSql, [type, mark, color, vid], (err, result) => {
                                         if (err) throw err;
                                         if (result && result.affectedRows == 1) {
@@ -52,7 +52,7 @@ function Orderform() {
                                                 if (err) throw err;
                                                 if (result && result[0]) {
                                                     let storeId = result[0]["store"];
-                                                    let formSql = "INSERT INTO orderform VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, ?, DEFAULT, DEFAULT, DEFAULT, DEFAULT)";
+                                                    let formSql = "INSERT INTO orderform VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, DEFAULT, DEFAULT, DEFAULT, DEFAULT)";
                                                     MySQL.Query(formSql, [NS.GetRandomStr(), vname, phone, uid, storeId, new Date().getTime(), clothId, price, title], (err, result) => {
                                                         if (err) throw err;
                                                         if (result.affectedRows == 1) {
@@ -121,7 +121,7 @@ function Orderform() {
                     } break;
                 }
                 sort = sort == "1" ? "" : "DESC";
-                let sqlSel = `SELECT _id, ordernum, user, phone, (SELECT name FROM member WHERE _id=accept) AS accept, (SELECT name FROM store WHERE _id=acceptStore) AS acceptStore, accepttime, (SELECT mark FROM clothes WHERE _id=cloth) AS mark, (SELECT color FROM clothes WHERE _id=cloth) AS color, price, complete, cpltime, cpler, del FROM orderform WHERE del=?`;
+                let sqlSel = `SELECT _id, ordernum, user, phone, (SELECT name FROM member WHERE _id=accept) AS accept, (SELECT name FROM store WHERE _id=acceptStore) AS acceptStore, accepttime, (SELECT mark FROM clothes WHERE _id=cloth) AS mark, (SELECT color FROM clothes WHERE _id=cloth) AS color, price, complete, cpltime, (SELECT name FROM member WHERE _id=cpler) AS cpler FROM orderform WHERE del=?`;
                 if (level != 99) {
                     sqlCnt += ` AND acceptStore=(SELECT store FROM member WHERE _id=${uid})`;
                 }
@@ -140,11 +140,31 @@ function Orderform() {
                 if (!NS.MethodFilter(req, res, "get")) return;
                 let id = param["id"];
                 if (!id) return;
-                let sql = `UPDATE orderform SET complete=?, cpltime=?, cpler=?`;
-                MySQL.Query(sql, [1, new Date().getTime(), uid], (err, result) => {
+                let progress = 0;
+                let sql = `UPDATE orderform SET complete=?, cpltime=?, cpler=? WHERE _id=?`;
+                MySQL.Query(sql, [1, new Date().getTime(), uid, id], (err, result) => {
                     if (err) throw err;
+                    // console.log(result);
                     if (result && result.affectedRows == 1) {
-                        NS.Send(res, NS.Build(200, "处理成功"));
+                        progress += 50;
+                        if (progress == 100) {
+                            NS.Send(res, NS.Build(200, "处理成功"));
+                        }
+                    } else {
+                        NS.Send(res, NS.Build(400, "处理失败"));
+                    }
+                });
+
+
+                let delSql = `UPDATE clothes SET complete=? WHERE _id=(SELECT cloth FROM orderform WHERE _id=?)`;
+                MySQL.Query(delSql, [0, id], (err, result) => {
+                    if (err) throw err;
+                    // console.log(result);
+                    if (result && result.affectedRows == 1) {
+                        progress += 50;
+                        if (progress == 100) {
+                            NS.Send(res, NS.Build(200, "处理成功"));
+                        }
                     } else {
                         NS.Send(res, NS.Build(400, "处理失败"));
                     }
