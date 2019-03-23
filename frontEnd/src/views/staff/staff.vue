@@ -11,17 +11,32 @@
 
 		<!--列表-->
 		<el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-			<el-table-column type="selection" width="55">
+			<el-table-column type="id" width="0">
 			</el-table-column>
 			<el-table-column type="index" width="60">
 			</el-table-column>
-			<el-table-column prop="name" label="员工名称" width="120" sortable>
+			<el-table-column prop="newName" label="员工名称" width="120">
 			</el-table-column>
-			<el-table-column prop="price" label="入职日期" width="120" sortable>
+			<el-table-column prop="avatar" label="头像" width="100">
+        <template slot-scope="scope">
+          <img class="owner-avatar" :src="scope.row.avatar" alt="">
+        </template>
 			</el-table-column>
-			<el-table-column prop="time" label="有效日期" width="120" sortable>
+			<el-table-column prop="newPhone" label="电话" min-width="120">
 			</el-table-column>
-			<el-table-column prop="dec" label="备注" min-width="180" sortable>
+			<el-table-column prop="gender" label="性别" min-width="80">
+        <template slot-scope="scope">
+					<span>{{scope.row.gender==2?'女':scope.row.gender==1?'男':'未知'}}</span>
+				</template>
+			</el-table-column>
+			<el-table-column prop="salary" label="工资" min-width="120">
+			</el-table-column>
+			<el-table-column prop="storename" label="所属店铺" width="120">
+			</el-table-column>
+			<el-table-column prop="time" label="入职日期" min-width="120">
+        <template slot-scope="scope">
+          <span>{{new Date(parseInt(scope.row.time)).toLocaleString().replace(/:\d{1,2}$/,' ')}}</span>
+        </template>
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template slot-scope="scope">
@@ -33,8 +48,7 @@
 
 		<!--工具条-->
 		<el-col :span="24" class="toolbar">
-			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
+			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="12" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>
 
@@ -42,16 +56,25 @@
 		<el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
 			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
 				<el-form-item label="员工名称" prop="name">
-					<el-input v-model="editForm.name" auto-complete="off"></el-input>
+					<el-input v-model="editForm.newName" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="入职日期">
-					<el-input-number v-model="editForm.price" :min="0" :max="200"></el-input-number>
+				<el-form-item label="电话">
+					<el-input v-model="editForm.newPhone"></el-input>
 				</el-form-item>
-				<el-form-item label="有效日期">
-					<el-date-picker type="date" placeholder="选择日期" v-model="editForm.time"></el-date-picker>
+				<el-form-item label="工资">
+					<el-input v-model="editForm.salary"></el-input>
 				</el-form-item>
-				<el-form-item label="备注">
-					<el-input type="textarea" v-model="editForm.dec"></el-input>
+				<el-form-item label="性别">
+          <el-radio-group v-model="editForm.gender">
+						<el-radio class="radio" :label="1">男</el-radio>
+						<el-radio class="radio" :label="2">女</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item label="身份">
+          <el-radio-group v-model="editForm.ident">
+						<el-radio class="radio" :label="'manager'">店长</el-radio>
+						<el-radio class="radio" :label="'staff'">普通员工</el-radio>
+					</el-radio-group>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -72,18 +95,18 @@
 				<el-form-item label="员工密码" prop="pwd">
 					<el-input v-model="addForm.pwd" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="性别">
+          <el-radio-group v-model="addForm.gender">
+						<el-radio class="radio" :label="1">男</el-radio>
+						<el-radio class="radio" :label="2">女</el-radio>
+					</el-radio-group>
+				</el-form-item>
 				<el-form-item label="所属店铺编号" prop="storeId">
 					<el-input v-model="addForm.storeId" auto-complete="off"></el-input>
           <p>可选店铺编号：
             <span v-for="(item,index) in shop" :key="index">{{item}} ,</span>
           </p>
 				</el-form-item>
-				<!-- <el-form-item label="员工身份">
-					<el-radio-group v-model="addForm.ident">
-						<el-radio class="radio" :label="'staff'">员工</el-radio>
-						<el-radio class="radio" :label="'manager'">店长</el-radio>
-					</el-radio-group>
-				</el-form-item> -->
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="addFormVisible = false">取消</el-button>
@@ -121,15 +144,27 @@ export default {
       editFormVisible: false, //编辑界面是否显示
       editLoading: false,
       editFormRules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        newName: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        newnewPhone: [
+          {
+            required: true,
+            pattern: /^1\d{10}$/,
+            message: "手机号格式不正确",
+            trigger: "blur"
+          }
+        ],
+        gender: [{ required: true, message: "请选择性别", trigger: "blur" }],
+        salary: [{ required: true, message: "请输入工资", trigger: "blur" }],
+        ident: [{ required: true, message: "请选择身份", trigger: "blur" }]
       },
       //编辑界面数据
       editForm: {
         id: 0,
-        name: "",
-        price: 0,
-        time: "",
-        dec: ""
+        newName: "",
+        newPhone: 0,
+        gender: "",
+        salary: "",
+        indet:'staff'
       },
 
       addFormVisible: false, //新增界面是否显示
@@ -155,7 +190,8 @@ export default {
         phone: "",
         pwd: "",
         storeId: "",
-        ident: "staff"
+        ident: "staff",
+        gender:1
       },
       canaddstaff: false,
       shop: []
@@ -168,49 +204,76 @@ export default {
     },
     handleCurrentChange(val) {
       this.page = val;
-      this.getUsers();
+      this.getUsers(this.page);
     },
     //获取用户列表
-    getUsers() {
-      this.total = 1; //delete
-      this.listLoading = false;
-      this.users = []; //delete
-
-      for (let i = 0; i < 86; i++) {
-        //delete
-        this.users.push(
-          Mock.mock({
-            id: Mock.Random.guid(),
-            price: Mock.Random.guid(),
-            name: Mock.Random.cname(),
-            dec: Mock.mock("@county(true)"),
-            "age|18-60": 1,
-            time: Mock.Random.date(),
-            sex: Mock.Random.integer(0, 1)
-          })
-        );
-      }
+    getUsers(page) {
+      let param = {
+        pno: page // 当前页码 不传的话默认1
+      };
+      httpGet("/staff/getstafflist", param)
+        .then(res => {
+          this.listLoading = false;
+          if (res.code == 200) {
+            console.log("staff list", res);
+            this.total = res.data.staffCount;
+            this.users = [];
+            for (let i = 0; i < res.data.items.length; i++) {
+              this.users.push({
+                id: res.data.items[i]._id,
+                newName: res.data.items[i].name,
+                time: res.data.items[i].rgt,
+                gender: res.data.items[i].gender,
+                newPhone: res.data.items[i].phone,
+                salary: res.data.items[i].salary,
+                storename: res.data.items[i].storename,
+                avatar: res.data.items[i].avatar,
+                store: res.data.items[i].store,
+                ident: "staff"
+              });
+            }
+            console.log(this.users)
+          } else {
+            this.$message({
+              message: res.msg,
+              type: "warning"
+            });
+          }
+        })
+        .catch((err) => {
+          this.listLoading = false;
+          console.log(err);
+        });
     },
     //删除
     handleDel: function(index, row) {
       this.$confirm("确认删除该记录吗?", "提示", {
         type: "warning"
       })
-        .then(() => {
+        .then(res => {
           this.listLoading = true;
-
           let para = { id: row.id };
-          removeUser(para).then(res => {
+          httpPost("/staff/delstaff", para).then(res => {
+            console.log("del", res);
             this.listLoading = false;
-
-            this.$message({
-              message: "删除成功",
-              type: "success"
-            });
-            this.getUsers();
+            if (res.code == 200) {
+              this.$message({
+                message: res.msg,
+                type: "success"
+              });
+              this.getUsers(this.page);
+            } else {
+              this.$message({
+                message: res.msg,
+                type: "warning"
+              });
+            }
           });
         })
-        .catch(() => {});
+        .catch(err => {
+          this.listLoading = false;
+          console.log(err);
+        });
     },
     //显示编辑界面
     handleEdit: function(index, row) {
@@ -219,7 +282,7 @@ export default {
     },
     //显示新增界面
     handleAdd: function() {
-      httpGet("/staff/canaddstaff")
+      httpGet("/staff/canaddstaff",{ident: 'staff'})
         .then(res => {
           // console.log(res)
           this.addLoading = false;
@@ -242,27 +305,35 @@ export default {
         });
     },
     //编辑
-    editSubmit: function() {
+    editSubmit() {
       this.$refs.editForm.validate(valid => {
         if (valid) {
           this.$confirm("确认提交吗？", "提示", {}).then(() => {
             this.editLoading = true;
-
             let para = Object.assign({}, this.editForm);
-            para.time =
-              !para.time || para.time == ""
-                ? ""
-                : util.formatDate.format(new Date(para.time), "yyyy-MM-dd");
-            editUser(para).then(res => {
+            console.log(para);
+            httpPost("/staff/editstaff", para).then(res => {
+              console.log("edit", res);
               this.editLoading = false;
-
-              this.$message({
-                message: "提交成功",
-                type: "success"
-              });
-              this.$refs["editForm"].resetFields();
               this.editFormVisible = false;
-              this.getUsers();
+              if (res.code == 200) {
+                this.$message({
+                  message: res.msg,
+                  type: "success"
+                });
+                this.$refs["editForm"].resetFields();
+                this.getUsers(this.page);
+              } else {
+                this.$message({
+                  message: res.msg,
+                  type: "warning"
+                });
+              }
+            })
+            .catch(err=>{
+              console.log(err)
+              this.editLoading = false;
+              this.editFormVisible = false;
             });
           });
         }
@@ -286,7 +357,7 @@ export default {
                     type: "success"
                   });
                   this.$refs["addForm"].resetFields();
-                  // this.getUsers(this.page);
+                  this.getUsers(this.page);
                 } else {
                   this.$message({
                     message: res.msg,
@@ -306,34 +377,16 @@ export default {
     selsChange: function(sels) {
       this.sels = sels;
     },
-    //批量删除
-    batchRemove: function() {
-      var ids = this.sels.map(item => item.id).toString();
-      this.$confirm("确认删除选中记录吗？", "提示", {
-        type: "warning"
-      })
-        .then(() => {
-          this.listLoading = true;
-
-          let para = { ids: ids };
-          batchRemoveUser(para).then(res => {
-            this.listLoading = false;
-
-            this.$message({
-              message: "删除成功",
-              type: "success"
-            });
-            this.getUsers();
-          });
-        })
-        .catch(() => {});
-    }
   },
   mounted() {
-    this.getUsers();
+    this.getUsers(this.page);
   }
 };
 </script>
 
 <style scoped>
+.owner-avatar {
+  width: 20px;
+  height: auto;
+}
 </style>
