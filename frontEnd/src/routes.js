@@ -79,8 +79,8 @@ let routes = [
         name: '衣物管理',
         iconCls: 'fa fa-asterisk',
         children: [
-            { path: '/manage_history', component: manageHistory, name: '库存衣物' },
-            { path: '/manage_stock', component: manageStock, name: '历史衣物' },
+            { path: '/manage_stock', component: manageStock, name: '库存衣物' },
+            { path: '/manage_history', component: manageHistory, name: '历史衣物' },
             { path: '/manage_price', component: managePrice, name: '价格表' },
         ]
     },

@@ -53,14 +53,7 @@
 </template>
 
 <script>
-import util from "../../common/js/util";
-import Mock from "mockjs"; //delete
 import {
-  getUserListPage,
-  removeUser,
-  batchRemoveUser,
-  editUser,
-  addUser,
   httpGet,
   httpPost
 } from "../../api/api";

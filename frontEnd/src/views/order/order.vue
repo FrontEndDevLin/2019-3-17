@@ -6,6 +6,28 @@
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
 				</el-form-item>
+        <el-form-item>
+          <span>排序方式 ：</span>
+          <el-select v-model="field" placeholder="请选择" @change="currentSel">
+            <el-option
+              v-for="(item,index) in fieldArr"
+              :key="index"
+              :label="item.name"
+              :value="item.type">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <span>升/降序 ：</span>
+          <el-select v-model="sort" placeholder="请选择" @change="currentSort">
+            <el-option
+              v-for="(item,index) in sortArr"
+              :key="index"
+              :label="item.name"
+              :value="item.type">
+            </el-option>
+          </el-select>
+        </el-form-item>
 			</el-form>
 		</el-col>
 
@@ -65,37 +87,6 @@
 			</el-pagination>
 		</el-col>
 
-		<!--编辑界面-->
-		<!-- <el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
-			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-				<el-form-item label="员工名称" prop="name">
-					<el-input v-model="editForm.newName" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="电话">
-					<el-input v-model="editForm.newPhone"></el-input>
-				</el-form-item>
-				<el-form-item label="工资">
-					<el-input v-model="editForm.salary"></el-input>
-				</el-form-item>
-				<el-form-item label="性别">
-          <el-radio-group v-model="editForm.gender">
-						<el-radio class="radio" :label="1">男</el-radio>
-						<el-radio class="radio" :label="2">女</el-radio>
-					</el-radio-group>
-				</el-form-item>
-				<el-form-item label="身份">
-          <el-radio-group v-model="editForm.ident">
-						<el-radio class="radio" :label="'manager'">店长</el-radio>
-						<el-radio class="radio" :label="'staff'">普通员工</el-radio>
-					</el-radio-group>
-				</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="editFormVisible = false">取消</el-button>
-				<el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
-			</div>
-		</el-dialog> -->
-
 		<!--新增界面-->
 		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
@@ -128,17 +119,7 @@
 </template>
 
 <script>
-import util from "../../common/js/util";
-import Mock from "mockjs"; //delete
-import {
-  getUserListPage,
-  removeUser,
-  batchRemoveUser,
-  editUser,
-  addUser,
-  httpGet,
-  httpPost
-} from "../../api/api";
+import { httpGet, httpPost } from "../../api/api";
 
 export default {
   data() {
@@ -149,7 +130,19 @@ export default {
       users: [],
       total: 0,
       page: 1,
-      sort:'accepttime',//排序字段 默认为'accepttime',可选'acceptStore','price','complete','cpltime'
+      field: "accepttime", //排序字段 默认为'accepttime',可选'acceptStore','price','complete','cpltime'
+      fieldArr: [
+        { name: "下单时间", type: "accepttime" },
+        { name: "受理店铺", type: "acceptStore" },
+        { name: "价格", type: "price" },
+        { name: "是否完成", type: "complete" },
+        { name: "完成时间", type: "cpltime" }
+      ],
+      sort: "", //降序，1升
+      sortArr: [
+        { name: "升序", type: '1' },
+        { name: "降序", type: '-1' }
+      ],
       listLoading: false,
       sels: [], //列表选中列
 
@@ -186,18 +179,27 @@ export default {
     };
   },
   methods: {
+    currentSel() {
+      console.log(this.field);
+      this.getUsers(this.page, this.field, this.sort);
+    },
+    currentSort() {
+      console.log(this.sort);
+      this.getUsers(this.page, this.field, this.sort);
+    },
     //性别显示转换
     formatSex: function(row, column) {
       return row.sex == 1 ? "男" : row.sex == 0 ? "女" : "未知";
     },
     handleCurrentChange(val) {
       this.page = val;
-      this.getUsers(this.page,this.sort);
+      this.getUsers(this.page, this.field, this.sort);
     },
     //获取用户列表
-    getUsers(page,sort) {
+    getUsers(page, field, sort) {
       let param = {
-        pno: page ,// 当前页码 不传的话默认1
+        pno: page, // 当前页码 不传的话默认1
+        field: field,
         sort: sort
       };
       httpGet("/orderform/getform", param)
@@ -209,20 +211,20 @@ export default {
             this.users = [];
             for (let i = 0; i < res.data.items.length; i++) {
               this.users.push({
-                accept:res.data.items[i].accept,
-                acceptStore:res.data.items[i].acceptStore,
-                accepttime:res.data.items[i].accepttime,
-                color:res.data.items[i].color,
-                complete:res.data.items[i].complete,
-                cpler:res.data.items[i].cpler,
-                cpltime:res.data.items[i].cpltime,
-                del:res.data.items[i].del,
-                mark:res.data.items[i].mark,
-                ordernum:res.data.items[i].ordernum,
-                phone:res.data.items[i].phone,
-                price:res.data.items[i].price,
-                user:res.data.items[i].user,
-                _id:res.data.items[i]._id,
+                accept: res.data.items[i].accept,
+                acceptStore: res.data.items[i].acceptStore,
+                accepttime: res.data.items[i].accepttime,
+                color: res.data.items[i].color,
+                complete: res.data.items[i].complete,
+                cpler: res.data.items[i].cpler,
+                cpltime: res.data.items[i].cpltime,
+                del: res.data.items[i].del,
+                mark: res.data.items[i].mark,
+                ordernum: res.data.items[i].ordernum,
+                phone: res.data.items[i].phone,
+                price: res.data.items[i].price,
+                user: res.data.items[i].user,
+                _id: res.data.items[i]._id
               });
             }
             console.log(this.users);
@@ -254,7 +256,7 @@ export default {
                 message: res.msg,
                 type: "success"
               });
-              this.getUsers(this.page,this.sort);
+              this.getUsers(this.page, this.field, this.sort);
             } else {
               this.$message({
                 message: res.msg,
@@ -272,24 +274,24 @@ export default {
     handleAdd: function() {
       httpGet("/cloth/getpricelist", { all: true })
         .then(res => {
-          console.log("all price", res,res.data.items.length);
+          console.log("all price", res, res.data.items.length);
           this.addLoading = false;
           if (res.code == 200) {
-            if(res.data.items.length>0){
-                this.addFormVisible = true;
-                this.allPrice = [];
-                for (let i = 0; i < res.data.items.length; i++) {
-                  this.allPrice.push({
-                    title: res.data.items[i].title,
-                    typeId: res.data.items[i]._id.toString()
-                  });
-                }
-                console.log(this.allPrice);
-            }else{
+            if (res.data.items.length > 0) {
+              this.addFormVisible = true;
+              this.allPrice = [];
+              for (let i = 0; i < res.data.items.length; i++) {
+                this.allPrice.push({
+                  title: res.data.items[i].title,
+                  typeId: res.data.items[i]._id.toString()
+                });
+              }
+              console.log(this.allPrice);
+            } else {
               this.$message({
-              message: '请先添加价格参考表',
-              type: "warning"
-            });
+                message: "请先添加价格参考表",
+                type: "warning"
+              });
             }
           } else {
             this.$message({
@@ -305,11 +307,11 @@ export default {
     },
     //编辑
     handleEdit(index, row) {
-      this.editForm ={id:row._id};
-      console.log('id',this.editForm)
+      this.editForm = { id: row._id };
+      console.log("id", this.editForm);
       this.$confirm("确认提交吗？", "提示", {}).then(() => {
         this.editLoading = true;
-        console.log('order edit',this.editForm);
+        console.log("order edit", this.editForm);
         httpGet("/orderform/endform", this.editForm)
           .then(res => {
             console.log("edit", res);
@@ -319,7 +321,7 @@ export default {
                 message: res.msg,
                 type: "success"
               });
-              this.getUsers(this.page,this.sort);
+              this.getUsers(this.page, this.field, this.sort);
             } else {
               this.editLoading = false;
               this.$message({
@@ -352,7 +354,7 @@ export default {
                     type: "success"
                   });
                   this.$refs["addForm"].resetFields();
-                  this.getUsers(this.page,this.sort);
+                  this.getUsers(this.page, this.field, this.sort);
                 } else {
                   this.$message({
                     message: res.msg,
@@ -374,7 +376,7 @@ export default {
     }
   },
   mounted() {
-    this.getUsers(this.page,this.sort);
+    this.getUsers(this.page, this.field, -1);
   }
 };
 </script>
