@@ -4,11 +4,14 @@
 
 function HTTPAPIHandle() {
     const url = require("url");
+
     let Auth = require("./APIAuth");
     let Cloth = require("./APICloth");
     let Vip = require("./APIVip");
     let Store = require("./APIStore");
     let Staff = require("./APIStaff");
+    let Orderform = require("./APIOrderform");
+
     let ConfParser = require("./ConfigParser");
     let NS = require("./NameSpace");
 
@@ -52,6 +55,9 @@ function HTTPAPIHandle() {
             } break;
             case "staff": {
                 Staff.OnStaff(req, res, handle);
+            } break;
+            case "orderform": {
+                Orderform.OnOrderform(req, res, handle);
             } break;
             default:
                 break;

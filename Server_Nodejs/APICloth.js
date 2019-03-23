@@ -41,7 +41,7 @@ function Cloth() {
 
                 field = field == "type" ? "type" : "price";
                 sort = sort == "1" ? "" : "DESC";
-                let sqlSel = `SELECT title, price, type FROM Commodit WHERE del=? 
+                let sqlSel = `SELECT _id, title, price, type FROM Commodit WHERE del=? 
                 ORDER BY ${field} ${sort} LIMIT ?, ?`;
                 MySQL.Query(sqlSel, [1, (pno - 1) * pageSize, pageSize], (err, result) => {
                     if (err) throw err;
@@ -70,6 +70,24 @@ function Cloth() {
                         data = NS.Build(400, "添加失败");
                     }
                     NS.Send(res, data);
+                })
+            } break;
+            case 'editcommodit': {
+                
+            } break;
+            case 'delcommodit': {
+                if (!NS.MethodFilter(req, res, "post")) return;
+                NS.GetPostData(req, (postParam) => {
+                    let id = postParam["cid"];
+                    let sql = `UPDATE commodit SET del=? WHERE _id=?`;
+                    MySQL.Query(sql, [1, id], (err, result) => {
+                        if (err) throw err;
+                        if (result && result.affectedRows == 1) {
+                            NS.Send(res, NS.Build(200, "删除成功"));
+                        } else {
+                            NS.Send(res, NS.Build(400, "删除失败"));
+                        }
+                    })
                 })
             } break;
             default:

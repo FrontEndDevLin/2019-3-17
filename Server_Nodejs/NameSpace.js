@@ -53,6 +53,16 @@ let NameSpace = {
     Base64ToImg: function (base64String, imgType) {
         imgType = imgType || "jpg";
         return "data:image/" + imgType + ";base64," + base64String;
+    },
+
+    GetRandomStr: function () {
+        let arr = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+        let str = "";
+        let length = arr.length
+        for (let i = 0; i < 6; i++) {
+            str += arr[parseInt(Math.random() * length)];
+        }
+        return (new Date().getTime() + str).toUpperCase();
     }
 }
 

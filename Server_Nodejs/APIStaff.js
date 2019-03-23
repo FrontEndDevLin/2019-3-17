@@ -43,8 +43,7 @@ function Staff() {
                 if (!NS.MethodFilter(req, res, "post")) return;
                 NS.GetPostData(req, function (postParam) {
                     let name = postParam["name"], phone = postParam["phone"], pwd = postParam["pwd"],
-                        store = postParam["storeId"], ident = postParam["ident"] || "staff";
-
+                        store = postParam["storeId"], gender = postParam["gender"] || 0, ident = postParam["ident"] || "staff";
                     let staffLv = ident == "manager" ? 9 : 0;
                     if (staffLv == 9) {
                         if (level == 9) {
@@ -69,19 +68,23 @@ function Staff() {
                             if (result && result.length >= 1) {
                                 let avatars = fs.readdirSync("./res/avatar/default");
                                 let long = avatars.length;
-                                let insSql = `INSERT INTO member VALUES(NULL, ?, DEFAULT, ?, DEFAULT, ?, md5(?), ?, ?, ?, DEFAULT, DEFAULT, DEFAULT)`;
-                                MySQL.Query(insSql, [name, phone, staffLv, pwd, "avatar/default/" + avatars[parseInt(Math.random() * long)], store, new Date().getTime()], (err, result) => {
+                                let insSql = `INSERT INTO member VALUES(NULL, ?, ?, ?, DEFAULT, ?, md5(?), ?, ?, ?, DEFAULT, DEFAULT, DEFAULT)`;
+                                MySQL.Query(insSql, [name, gender, phone, staffLv, pwd, "avatar/default/" + avatars[parseInt(Math.random() * long)], store, new Date().getTime()], (err, result) => {
                                     if (err) throw err;
                                     if (result && result.affectedRows == 1) {
-                                        let ownId = result.insertId;
-                                        MySQL.Query(`UPDATE store SET own=? WHERE _id=?`, [ownId, store], (err, result) => {
-                                            if (err) throw err;
-                                            if (result) {
-                                                NS.Send(res, NS.Build(200, "添加成功"))
-                                            } else {
-                                                NS.Send(res, NS.Build(400, "添加失败"))
-                                            }
-                                        })
+                                        if (staffLv == 0) {
+                                            NS.Send(res, NS.Build(200, "添加成功"))
+                                        } else {
+                                            let ownId = result.insertId;
+                                            MySQL.Query(`UPDATE store SET own=? WHERE _id=?`, [ownId, store], (err, result) => {
+                                                if (err) throw err;
+                                                if (result) {
+                                                    NS.Send(res, NS.Build(200, "添加成功"))
+                                                } else {
+                                                    NS.Send(res, NS.Build(400, "添加失败"))
+                                                }
+                                            })
+                                        }
                                     } else {
                                         NS.Send(res, NS.Build(400, "添加失败"))
                                     }
@@ -123,14 +126,14 @@ function Staff() {
                 })
 
 
-                let sql = `SELECT _id AS id, name, gender, phone, avatar, salary, (
+                let sql = `SELECT _id AS id, name, gender, phone, avatar, rgt, salary, (
                     SELECT name FROM store WHERE own=id
                 ) AS storename FROM member WHERE del=? AND level=? ORDER BY _id LIMIT ?, ?`;
                 MySQL.Query(sql, [1, 9, (pno - 1) * pageSize, pageSize], (err, result) => {
                     if (err) throw err;
                     if (result && result.length >= 0) {
                         for (let tmp of result) {
-                            tmp["avatar"] = fs.readFileSync(`./res/${tmp["avatar"]}`, "base64");
+                            tmp["avatar"] = NS.Base64ToImg(fs.readFileSync(`./res/${tmp["avatar"]}`, "base64"));
                             tmp["storename"] = tmp["storename"] || '未分派';
                         }
                         rspData["items"] = result;
@@ -181,9 +184,9 @@ function Staff() {
 
                 let sqlSel = "";
                 if (level == 99) {
-                    sqlSel = `SELECT name, gender, phone, store, avatar, salary, (SELECT name FROM store WHERE _id=store) AS storename, rgt FROM member WHERE del=1 AND level=0`;
+                    sqlSel = `SELECT _id, name, gender, phone, store, avatar, salary, (SELECT name FROM store WHERE _id=store) AS storename, rgt FROM member WHERE del=1 AND level=0`;
                 } else if (level == 9) {
-                    sqlSel = `SELECT name, gender, phone, store, avatar, salary, (SELECT name FROM store WHERE _id=store) AS storename, rgt FROM member WHERE del=1 AND level=0 AND store=(
+                    sqlSel = `SELECT _id, name, gender, phone, store, avatar, salary, (SELECT name FROM store WHERE _id=store) AS storename, rgt FROM member WHERE del=1 AND level=0 AND store=(
                         SELECT _id FROM store WHERE own=${uid}
                     )`;
                 }
@@ -339,11 +342,14 @@ function Staff() {
                                 lv = postParam["ident"] == "manager" ? 9 : 0;
 
                             if (lv == 9) {
+
+                                let memberSql = `SELECT store FROM member WHERE _id=?`; // 店铺编号
+
                                 // 查询该店是否存在店长
-                                let existManagerSql = `SELECT _id FROM store WHERE del=? AND _id=(
-                                    SELECT store FROM member WHERE level=?
+                                let existManagerSql = `SELECT own FROM store WHERE del=? AND _id=(
+                                    SELECT store FROM member WHERE _id=? AND level=?
                                 )`;
-                                MySQL.Query(existManagerSql, [1, 9], (err, result) => {
+                                MySQL.Query(existManagerSql, [1, mid, 0], (err, result) => {
                                     if (err) throw err;
                                     if (result && result.length) {
                                         NS.Send(res, NS.Build(406, "该店已存在店长，请先降级"))

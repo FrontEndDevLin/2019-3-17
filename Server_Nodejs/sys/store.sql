@@ -27,7 +27,6 @@ CREATE Table Store(    # 分店
     own INT DEFAULT 0,  # 属于
     del TINYINT DEFAULT 1
 );
-INSERT INTO Store VALUES(NULL, "1号店", DEFAULT, 1552902178513, 2, DEFAULT);
 
 CREATE Table Vip(  # 会员
     _id INT PRIMARY KEY AUTO_INCREMENT,
@@ -39,21 +38,25 @@ CREATE Table Vip(  # 会员
     del TINYINT DEFAULT 1
 );
 
+drop table if EXISTS Orderform;
 CREATE Table Orderform(    # 订单
     _id INT PRIMARY KEY AUTO_INCREMENT,
     ordernum VARCHAR(32),
     user VARCHAR(32),
     phone BIGINT NOT NULL,
     accept INT NOT NULL, # 受理人
-    accepted TINYINT DEFAULT 0,
+    acceptStore INT NOT NULL,   # 受理点
     accepttime BIGINT,
+    cloth INT NOT NULL,
     complete TINYINT DEFAULT 0,
+    cpltime BIGINT DEFAULT 0,
+    cpler INT DEFAULT 0,
     del TINYINT DEFAULT 1
 );
 
 CREATE Table Commodit(     # 价格表
     _id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(16) UNIQUE,
+    title VARCHAR(16),
     price SMALLINT DEFAULT 10,
     type TINYINT DEFAULT 0,
     del TINYINT DEFAULT 1
@@ -84,5 +87,3 @@ CREATE Table Config(
 );
 
 INSERT INTO Member VALUES(null, "CEO", 1, 13622222222, DEFAULT, 99, md5("123abc"), "avatar/default/default_003.jpg", 0, 1552902178513, DEFAULT, DEFAULT, DEFAULT);
-INSERT INTO Member VALUES(null, "Lin", 1, 13633333333, DEFAULT, 9, md5("123abc"), "avatar/default/default_002.jpg", 1, 1552902178513, DEFAULT, DEFAULT, DEFAULT);
-INSERT INTO Member VALUES(null, "Jiangjiang", 2, 13644444444, DEFAULT, 0, md5("123abc"), "avatar/default/default_005.jpg", 1, 1552902178513, DEFAULT, DEFAULT, DEFAULT);
