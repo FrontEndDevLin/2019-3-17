@@ -38,7 +38,7 @@ CREATE Table Vip(  # 会员
     del TINYINT DEFAULT 1
 );
 
-drop table if EXISTS Orderform;
+-- drop table if EXISTS Orderform;
 CREATE Table Orderform(    # 订单
     _id INT PRIMARY KEY AUTO_INCREMENT,
     ordernum VARCHAR(32),
@@ -49,6 +49,7 @@ CREATE Table Orderform(    # 订单
     accepttime BIGINT,
     cloth INT NOT NULL,
     price INT NOT NULL,
+    title VARCHAR(16),
     complete TINYINT DEFAULT 0,
     cpltime BIGINT DEFAULT 0,
     cpler INT DEFAULT 0,
