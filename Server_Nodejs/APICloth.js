@@ -17,7 +17,9 @@ function Cloth() {
         }
         switch (handle) {
             case 'getpricelist': {
+                if (!NS.MethodFilter(req, res, "get")) return;
                 let pno = param["pno"] || 1, field = param["field"] || "type", sort = param["sort"] || "-1";
+                let all = param["all"] || false;
                 let pageSize = 12;
                 let progress = 0;
                 let rspData = { pno: pno, listCount: '', pCount: '', items: [] };
@@ -42,8 +44,11 @@ function Cloth() {
                 field = field == "type" ? "type" : "price";
                 sort = sort == "1" ? "" : "DESC";
                 let sqlSel = `SELECT _id, title, price, type FROM Commodit WHERE del=? 
-                ORDER BY ${field} ${sort} LIMIT ?, ?`;
-                MySQL.Query(sqlSel, [1, (pno - 1) * pageSize, pageSize], (err, result) => {
+                ORDER BY ${field} ${sort}`;
+                if (!all) {
+                    sqlSel += ` LIMIT ${(pno - 1) * pageSize}, ${pageSize}`;
+                }
+                MySQL.Query(sqlSel, [1], (err, result) => {
                     if (err) throw err;
                     if (result) {
                         rspData["items"] = result;
@@ -78,9 +83,9 @@ function Cloth() {
             case 'delcommodit': {
                 if (!NS.MethodFilter(req, res, "post")) return;
                 NS.GetPostData(req, (postParam) => {
-                    let id = postParam["cid"];
+                    let id = postParam["id"];
                     let sql = `UPDATE commodit SET del=? WHERE _id=?`;
-                    MySQL.Query(sql, [1, id], (err, result) => {
+                    MySQL.Query(sql, [0, id], (err, result) => {
                         if (err) throw err;
                         if (result && result.affectedRows == 1) {
                             NS.Send(res, NS.Build(200, "删除成功"));
