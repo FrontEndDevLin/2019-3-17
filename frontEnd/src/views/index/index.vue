@@ -4,18 +4,12 @@
             <el-col :span="12">
                 <div id="chartColumn" style="width:100%; height:400px;"></div>
             </el-col>
-            <!-- <el-col :span="12">
-                <div id="chartBar" style="width:100%; height:400px;"></div>
-            </el-col> -->
             <el-col :span="12">
                 <div id="chartLine" style="width:100%; height:400px;"></div>
             </el-col>
             <el-col :span="12">
                 <div id="chartPie" style="width:100%; height:400px;"></div>
             </el-col>
-            <!-- <el-col :span="24">
-                <a href="http://echarts.baidu.com/examples.html" target="_blank" style="float: right;">more>></a>
-            </el-col> -->
         </el-row>
     </section>
 </template>
@@ -119,19 +113,11 @@ export default {
                 this.chartPieNum.push(cnt)
                 arr3.push({name:acpter,value:cnt})
             }
-            console.log(arr3);
+            // console.log(arr3);
             this.chartPieData = arr3;
-            console.log(11,this.chartPieData)
-            // var test = [
-            //   { value: 335, name: "直接访问" },
-            //   { value: 310, name: "邮件营销" },
-            //   { value: 234, name: "联盟广告" },
-            //   { value: 135, name: "视频广告" },
-            //   { value: 1548, name: "搜索引擎" }
-            // ]
-            // console.log(test);
-            console.log(1,this.chartPieName)
-            console.log(2,this.chartPieNum)
+            // console.log(11,this.chartPieData)
+            // console.log(1,this.chartPieName)
+            // console.log(2,this.chartPieNum)
             this.drawPieChart();
           } else {
             this.$massage({
@@ -257,7 +243,6 @@ export default {
       this.chartPie.setOption({
         title: {
           text: "销售之星(前五)",
-        //   subtext: "纯属虚构",
           x: "center"
         },
         tooltip: {
@@ -267,7 +252,7 @@ export default {
         legend: {
           orient: "vertical",
           left: "left",
-          data: this.chartPieName//["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"]
+          data: this.chartPieName
         },
         series: [
           {
@@ -275,15 +260,7 @@ export default {
             type: "pie",
             radius: "55%",
             center: ["50%", "60%"],
-            data:  
-            //[
-            //   { value: 335, name: "直接访问" },
-            //   { value: 310, name: "邮件营销" },
-            //   { value: 234, name: "联盟广告" },
-            //   { value: 135, name: "视频广告" },
-            //   { value: 1548, name: "搜索引擎" }
-            // ],
-            this.chartPieData,
+            data:this.chartPieData,
             itemStyle: {
               emphasis: {
                 shadowBlur: 10,
@@ -294,22 +271,14 @@ export default {
           }
         ]
       });
-    },
-    drawCharts() {
-      //   this.drawColumnChart();
-    //   this.drawBarChart();
-      //   this.drawLineChart();
-    //   this.drawPieChart();
     }
   },
   created() {
     this.getData();
   },
   mounted: function() {
-    this.drawCharts();
   },
   updated: function() {
-    this.drawCharts();
   }
 };
 </script>

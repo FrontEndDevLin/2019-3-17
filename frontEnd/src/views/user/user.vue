@@ -6,8 +6,11 @@
         <el-form-item label="电子邮件">
 			<el-input v-model="form.email"></el-input>
 		</el-form-item>
-        <el-form-item label="电话">
+    <el-form-item label="电话">
 			<el-input v-model="form.tel"></el-input>
+		</el-form-item>
+    <el-form-item label="密码">
+			<el-input v-model="form.pwd"></el-input>
 		</el-form-item>
     <el-form-item label="性别">
 			<el-radio-group v-model="form.sex">
@@ -32,14 +35,14 @@
 			<el-input type="textarea" v-model="form.desc"></el-input>
 		</el-form-item>
 		<el-form-item class="btn">
-			<el-button type="primary">保存修改</el-button>
+			<el-button type="primary" @click.native="onSubmit" :loading="Loading">保存修改</el-button>
 			<!-- <el-button @click.native.prevent>取消</el-button> -->
 		</el-form-item>
 	</el-form>
 </template>
 
 <script>
-import { httpGet } from "../../api/api";
+import { httpGet,httpPost } from "../../api/api";
 export default {
   data() {
     return {
@@ -48,9 +51,11 @@ export default {
         email: "",
         tel: "",
         sex: "",
-        desc: ""
+        desc: "",
+        pwd: ""
       },
-      imageUrl: ""
+      imageUrl: "",
+      Loading:false
     };
   },
   methods: {
@@ -71,16 +76,36 @@ export default {
         });
     },
     onSubmit() {
-      console.log("submit!");
+      console.log(this.form)
+      this.Loading=true;
+      httpPost('',this.form)
+      .then(res=>{
+        this.Loading=false;
+        if(res.code==200){
+          this.$massage({
+            message: res.msg,
+            type: "success"
+          })
+        }else{
+          this.$massage({
+            message: res.msg,
+            type: "warning"
+          })
+        }
+      })
+      .catch(err=>{
+        this.Loading=false;
+        console.log(err)
+      })
     },
     handleAvatarSuccess(res, file) {
-      console.log(file)
+      console.log(file);
       this.imageUrl = URL.createObjectURL(file.raw);
-      console.log(this.imageUrl)
+      console.log(this.imageUrl);
       this.getUser();
     },
     beforeAvatarUpload(file) {
-      console.log(file)
+      console.log(file);
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
 

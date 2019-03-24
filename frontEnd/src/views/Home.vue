@@ -9,7 +9,7 @@
 					<i class="fa fa-align-justify"></i>
 				</div>
 			</el-col>
-      <el-col :span="1" class="bell">
+      <!-- <el-col :span="1" class="bell">
         <el-dropdown trigger="hover">
 					<span class="el-dropdown-link box">
             <span class="item">
@@ -18,37 +18,19 @@
             </span>
           </span>
 					<el-dropdown-menu slot="dropdown">
-						<!-- <el-dropdown-item>我的消息</el-dropdown-item>
-						<el-dropdown-item>设置</el-dropdown-item> -->
 						<el-dropdown-item divided @click.native="$router.push('/notice')">通知</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
-      </el-col>
+      </el-col> -->
 			<el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
-						<!-- <el-dropdown-item>我的消息</el-dropdown-item>
-						<el-dropdown-item>设置</el-dropdown-item> -->
 						<el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</el-col>
 		</el-col>
-
-    <!-- <el-dialog title="通知" v-model="dioalogVisible" :close-on-click-modal="false">
-			<el-form :model="dialogForm" label-width="80px" :rules="dialogFormRules" ref="dialogForm">
-				<el-form-item label="标题" prop="name">
-				</el-form-item>
-				<el-form-item label="价格">
-					这里是通知的具体信息……
-				</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="dialogFormVisible = false">取消</el-button>
-				<el-button type="primary" @click.native="dialogSubmit" :loading="dialogLoading">提交</el-button>
-			</div>
-		</el-dialog> -->
 
 		<el-col :span="24" class="main">
 			<aside :class="collapsed?'menu-collapsed':'menu-expanded'">

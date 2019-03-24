@@ -99,9 +99,10 @@ let routes = [
         component: Home,
         name: '会员管理',
         iconCls: 'fa fa-diamond',
+        leaf: true,//只有一个节点
         children: [
             { path: '/member_list', component: memberList, name: '会员列表' },
-            { path: '/member_flash', component: memberFlash, name: '优惠促销' }
+            // { path: '/member_flash', component: memberFlash, name: '优惠促销' }
         ]
     },
     {
@@ -125,81 +126,37 @@ let routes = [
             { path: '/staff_staff', component: staff, name: '管理员工',id:0 }
         ]
     },
-    {
-        path: '/',
-        component: Home,
-        name: '网站管理',
-        iconCls: 'fa fa-cubes',
-        children: [
-            // { path: '/web_advertise', component: webAdvertise, name: '网站信息' },
-            { path: '/web_all', component: webAll, name: '全体通知' },
-            { path: '/web_shop', component: webShop, name: '店铺通知' },
-        ]
-    },
-    {
-        path: '/',
-        component: Home,
-        name: '',
-        iconCls: 'fa fa-trash',
-        leaf: true,//只有一个节点
-        children: [
-            { path: '/recovery', component: recovery, name: '回收站' }
-        ]
-    },
-    {
-        path: '/',
-        component: Home,
-        name: '通知',
-        // iconCls: 'fa fa-cubes',
-        hidden: true,
-        children: [
-            { path: '/notice', component: notice, name: '通知消息' }
-            // { path: '/web_all', component: webAll, name: '全体通知' },
-            // { path: '/web_shop', component: webShop, name: '店铺通知' },
-        ]
-    },
-
-    // end
-    // test
     // {
     //     path: '/',
     //     component: Home,
-    //     name: '导航一',
-    //     iconCls: 'el-icon-message',//图标样式class
+    //     name: '网站管理',
+    //     iconCls: 'fa fa-cubes',
     //     children: [
-    //         { path: '/main', component: Main, name: '主页', hidden: true },
-    //         { path: '/table', component: Table, name: 'Table' },
-    //         { path: '/form', component: Form, name: 'Form' },
-    //         { path: '/user', component: user, name: '列表' },
-    //     ]
-    // },
-    // {
-    //     path: '/',
-    //     component: Home,
-    //     name: '导航二',
-    //     iconCls: 'fa fa-id-card-o',
-    //     children: [
-    //         { path: '/page4', component: Page4, name: '页面4' },
-    //         { path: '/page5', component: Page5, name: '页面5' }
+    //         // { path: '/web_advertise', component: webAdvertise, name: '网站信息' },
+    //         { path: '/web_all', component: webAll, name: '全体通知' },
+    //         { path: '/web_shop', component: webShop, name: '店铺通知' },
     //     ]
     // },
     // {
     //     path: '/',
     //     component: Home,
     //     name: '',
-    //     iconCls: 'fa fa-address-card',
+    //     iconCls: 'fa fa-trash',
     //     leaf: true,//只有一个节点
     //     children: [
-    //         { path: '/page6', component: Page6, name: '导航三' }
+    //         { path: '/recovery', component: recovery, name: '回收站' }
     //     ]
     // },
     // {
     //     path: '/',
     //     component: Home,
-    //     name: 'Charts',
-    //     iconCls: 'fa fa-bar-chart',
+    //     name: '通知',
+    //     // iconCls: 'fa fa-cubes',
+    //     hidden: true,
     //     children: [
-    //         { path: '/echarts', component: echarts, name: 'echarts' }
+    //         { path: '/notice', component: notice, name: '通知消息' }
+    //         // { path: '/web_all', component: webAll, name: '全体通知' },
+    //         // { path: '/web_shop', component: webShop, name: '店铺通知' },
     //     ]
     // },
     {
