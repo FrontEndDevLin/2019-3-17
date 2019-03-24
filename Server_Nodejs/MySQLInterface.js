@@ -23,7 +23,9 @@ function MySQLInterface() {
 
     this.Query = function (sql, paramArr, callback) {
         pool.query(sql, paramArr, function (err, result) {
-            return callback(err, result);
+            if (callback) {
+                return callback(err, result);
+            }
         })
     }
 

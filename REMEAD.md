@@ -309,7 +309,8 @@
     method: post,
     param: {
         pno: [number] 默认1
-        field: [string] 排序字段 默认为'accepttime',可选'acceptStore','price','complete','cpltime'
+        field: [string] 排序字段 默认为'accepttime',可选'acceptStore','price','complete','cpltime',
+        sort: [number] 默认-1
     }
 ```
 
@@ -324,7 +325,16 @@
 
 查看库存衣物
 ```
-    http://192.168.2.108:4449/orderform/getstocklist
+    http://192.168.2.108:4449/cloth/getstocklist
+    method: get,
+    param: {
+        pno: [number] 默认为1
+    }
+```
+
+查看历史衣物
+```
+    http://192.168.2.108:4449/cloth/gethistorylist
     method: get,
     param: {
         pno: [number] 默认为1
@@ -332,10 +342,14 @@
 ```
 
 
+
 ## 功能:
 ### ~~登录/注销~~
 
 ### 今日数据统计(echart)
+1. 今日订单数前六位
+2. 最近7天前3店铺销售量
+
 
 ### 个人信息
 1. ~~展示~~
@@ -343,11 +357,11 @@
 
 ### 历史数据统计(可筛选日期)
 
-### 衣服管理
-1. 查看库存衣物
+### ~~衣服管理~~
+1. ~~查看库存衣物~~
 2. ~~价格表~~(~~可添加~~，~~删除~~)
 
-### 订单管理
+### ~~订单管理~~
 1. ~~创建订单~~
 2. ~~查看订单~~(~~处理订单~~)
 

@@ -149,6 +149,7 @@ function Orderform() {
                         progress += 50;
                         if (progress == 100) {
                             NS.Send(res, NS.Build(200, "处理成功"));
+                            MySQL.Query(`UPDATE vip SET count=count+20 WHERE name=(SELECT user FROM orderform WHERE _id=${id}) AND phone=(SELECT phone FROM orderform WHERE _id=${id})`);
                         }
                     } else {
                         NS.Send(res, NS.Build(400, "处理失败"));
@@ -164,11 +165,14 @@ function Orderform() {
                         progress += 50;
                         if (progress == 100) {
                             NS.Send(res, NS.Build(200, "处理成功"));
+                            MySQL.Query(`UPDATE vip SET count=count+20 WHERE name=(SELECT user FROM orderform WHERE _id=?) AND phone=(SELECT phone FROM orderform WHERE _id=?)`);
                         }
                     } else {
                         NS.Send(res, NS.Build(400, "处理失败"));
                     }
-                })
+                });
+
+                
             } break;
             default:
                 break;

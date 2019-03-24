@@ -2,8 +2,20 @@
  * Created by X on 2019/3/17
  */
 
-function  s() {
+function HTTPWebServEntry() {
+    this.NetStart = function () {
+        const http = require("https");
+        const express = require("express");
 
+        let app = express();
+        let port = require("./ConfigParser").Parse("port", "http-Web");
+
+        http.createServer(app).listen(port, () => {
+            console.log(`HTTP-Web server is listening on ${port}`);
+        });
+
+        app.use(express.static(__dirname + '/static'));
+    }
 }
 
-module.exports = new s();
+module.exports = new HTTPWebServEntry();

@@ -58,7 +58,7 @@ CREATE Table Orderform(    # 订单
 
 CREATE Table Commodit(     # 价格表~
     _id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(16),
+    title VARCHAR(16) UNIQUE,
     price SMALLINT DEFAULT 10,
     type TINYINT DEFAULT 0,
     del TINYINT DEFAULT 1

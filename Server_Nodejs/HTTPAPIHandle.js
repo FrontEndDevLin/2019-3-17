@@ -6,6 +6,7 @@ function HTTPAPIHandle() {
     const url = require("url");
 
     let Auth = require("./APIAuth");
+    let Statist = require("./APIStatist");
     let Cloth = require("./APICloth");
     let Vip = require("./APIVip");
     let Store = require("./APIStore");
@@ -30,6 +31,7 @@ function HTTPAPIHandle() {
 
         // 过滤未登录的请求
         if (!(router == "auth" && (handle == "login" || handle == "checklogin" || handle == "logout"))) {
+            // console.log(router, handle);
             let cookieParams = NS.GetCookieParam(req);
             if (!cookieParams) {
                 return NS.Send(res, NS.Build(403, "拒绝访问"))
@@ -43,6 +45,9 @@ function HTTPAPIHandle() {
         switch (router) {
             case "auth": {
                 Auth.OnAuth(req, res, handle);
+            } break;
+            case "statist": {
+                Statist.OnStatist(req, res, handle);
             } break;
             case "cloth": {
                 Cloth.OnCloth(req, res, handle);

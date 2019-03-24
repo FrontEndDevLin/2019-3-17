@@ -65,17 +65,25 @@ function Cloth() {
                 if (!NS.MethodFilter(req, res, "get")) return;
                 let title = param["title"], price = parseInt(param["price"]) || 10, 
                     type = parseInt(param["type"]) || 0;
-                let sql = `INSERT INTO commodit VALUES(NULL, ?, ?, ?, DEFAULT)`;
-                MySQL.Query(sql, [title, price, type], (err, result) => {
+                MySQL.Query(`SELECT _id FROM commodit WHERE title=?`, [title], (err, result) => {
                     if (err) throw err;
-                    let data = {};
-                    if (result && result.affectedRows == 1) {
-                        data = NS.Build(200, "添加成功");
+                    if (result && result.length > 0) {
+                        NS.Send(res, NS.Build(400, "标题已存在"))
                     } else {
-                        data = NS.Build(400, "添加失败");
+                        let sql = `INSERT INTO commodit VALUES(NULL, ?, ?, ?, DEFAULT)`;
+                        MySQL.Query(sql, [title, price, type], (err, result) => {
+                            if (err) throw err;
+                            let data = {};
+                            if (result && result.affectedRows == 1) {
+                                data = NS.Build(200, "添加成功");
+                            } else {
+                                data = NS.Build(400, "添加失败");
+                            }
+                            NS.Send(res, data);
+                        })
                     }
-                    NS.Send(res, data);
                 })
+                
             } break;
             case 'editcommodit': {
                 
@@ -120,8 +128,47 @@ function Cloth() {
                     }
                 });
 
-                let sqlSel = `SELECT mark, color, (SELECT name FROM vip WHERE _id=vipId) AS vipName, (SELECT title FROM commodit WHERE _id=type) AS title WHERE del=? AND complete=? ORDER BY _id DESC LIMIT ?,?`;
+                let sqlSel = `SELECT _id AS __id, mark, type AS ty, color, (SELECT name FROM vip WHERE _id=vipId) AS vipName, (SELECT title FROM commodit WHERE _id=ty) AS title, (SELECT accepttime FROM orderform WHERE cloth=__id) AS time FROM clothes WHERE del=? AND complete=? ORDER BY _id DESC LIMIT ?,?`;
                 MySQL.Query(sqlSel, [1, 1, (pno - 1) * pageSize, pageSize], (err, result) => {
+                    if (err) throw err;
+                    if (result && result.length >= 0) {
+                        rspData["items"] = result;
+                        progress += 50;
+                        if (progress == 100) {
+                            NS.Send(res, NS.Build(200, "查询成功", rspData))
+                        }
+                    } else {
+                        NS.Send(res, NS.Build(406, "参数错误"))
+                    }
+                })
+            } break;
+            case 'gethistorylist': {
+                if (!NS.MethodFilter(req, res, "get")) return;
+                let pno = param["pno"] || 1;
+                let pageSize = 12;
+                let progress = 0;
+                let rspData = { pno: pno, clothCount: '', pCount: '', items: [] };
+
+                let sqlCnt = `SELECT count(_id) AS clothCount FROM clothes WHERE del=?`;
+                MySQL.Query(sqlCnt, [1], (err, result) => {
+                    if (err) throw err;
+                    if (result[0] && result[0].clothCount >= 0) {
+                        let count = result[0]["clothCount"];
+                        Object.assign(rspData, {
+                            clothCount: count,
+                            pCount: Math.ceil(count / pageSize)
+                        });
+                        progress += 50;
+                        if (progress == 100) {
+                            NS.Send(res, NS.Build(200, "查询成功", rspData))
+                        }
+                    } else {
+                        NS.Send(res, NS.Build(406, "参数错误"))
+                    }
+                });
+
+                let sqlSel = `SELECT _id AS __id, mark, type AS ty, color, (SELECT name FROM vip WHERE _id=vipId) AS vipName, (SELECT title FROM commodit WHERE _id=ty) AS title, (SELECT accepttime FROM orderform WHERE cloth=__id) AS time FROM clothes WHERE del=? AND complete=? ORDER BY _id DESC LIMIT ?,?`;
+                MySQL.Query(sqlSel, [1, 0, (pno - 1) * pageSize, pageSize], (err, result) => {
                     if (err) throw err;
                     if (result && result.length >= 0) {
                         rspData["items"] = result;

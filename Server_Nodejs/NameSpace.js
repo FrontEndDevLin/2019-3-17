@@ -63,7 +63,19 @@ let NameSpace = {
             str += arr[parseInt(Math.random() * length)];
         }
         return (new Date().getTime() + str).toUpperCase();
-    }
+    },
+
+    Compare: function (property, num) {
+		return function (obj1, obj2) {
+			let value1 = obj1[property];
+            let value2 = obj2[property];
+            if(!num || num == -1) {
+                return value2 - value1;     // 降序
+            } else if(num == 1){
+                return value1 - value2;
+            }
+		}
+	},
 }
 
 module.exports = NameSpace;
