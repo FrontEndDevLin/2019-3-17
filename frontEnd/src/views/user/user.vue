@@ -77,6 +77,7 @@ export default {
       console.log(file)
       this.imageUrl = URL.createObjectURL(file.raw);
       console.log(this.imageUrl)
+      this.getUser();
     },
     beforeAvatarUpload(file) {
       console.log(file)
