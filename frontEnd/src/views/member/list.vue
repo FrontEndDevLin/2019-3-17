@@ -112,7 +112,7 @@
 <script>
 import {
   httpPost,
-  checkMobile
+  httpGet
 } from "../../api/api";
 
 export default {

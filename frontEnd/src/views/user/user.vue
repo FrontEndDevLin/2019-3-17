@@ -19,7 +19,8 @@
 		<el-form-item label="头像">
 			<el-upload
 				class="avatar-uploader"
-				action="https://jsonplaceholder.typicode.com/posts/"
+				action="http://192.168.2.108:4449/auth/uploadavt"
+        :with-credentials="true"
 				:show-file-list="false"
 				:on-success="handleAvatarSuccess"
 				:before-upload="beforeAvatarUpload">
@@ -73,9 +74,12 @@ export default {
       console.log("submit!");
     },
     handleAvatarSuccess(res, file) {
+      console.log(file)
       this.imageUrl = URL.createObjectURL(file.raw);
+      console.log(this.imageUrl)
     },
     beforeAvatarUpload(file) {
+      console.log(file)
       const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
