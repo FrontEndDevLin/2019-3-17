@@ -1,20 +1,19 @@
 <template>
-	<el-form ref="form" :model="form" label-width="80px" @submit.prevent="onSubmit" style="margin:20px;width:60%;min-width:600px;">
-		<el-form-item label="姓名">
-			<el-input v-model="form.name"></el-input>
+	<el-form ref="form" :model="form" :rules="rules" label-width="80px" @submit.prevent="onSubmit" style="margin:20px;width:60%;min-width:600px;">
+		<el-form-item label="姓名" prop="dc_name">
+			<el-input v-model="form.dc_name"></el-input>
 		</el-form-item>
-        <el-form-item label="电子邮件">
+    <el-form-item label="电子邮件" prop="email">
 			<el-input v-model="form.email"></el-input>
 		</el-form-item>
-    <el-form-item label="电话">
-			<el-input v-model="form.tel"></el-input>
+    <el-form-item label="电话" prop="dc_phone">
+			<el-input v-model="form.dc_phone"></el-input>
 		</el-form-item>
-    <el-form-item label="密码">
+    <el-form-item label="密码" prop="pwd">
 			<el-input v-model="form.pwd"></el-input>
 		</el-form-item>
-    <el-form-item label="性别">
-			<el-radio-group v-model="form.sex">
-				<!-- <el-radio checked label="男"></el-radio> -->
+    <el-form-item label="性别" prop="gender">
+			<el-radio-group v-model="form.gender">
 				<el-radio :label="1">男</el-radio>
 				<el-radio :label="0">女</el-radio>
 			</el-radio-group>
@@ -32,30 +31,40 @@
 			</el-upload>
 		</el-form-item>
 		<el-form-item label="简介">
-			<el-input type="textarea" v-model="form.desc"></el-input>
+			<el-input type="textarea" v-model="form.intro"></el-input>
 		</el-form-item>
 		<el-form-item class="btn">
 			<el-button type="primary" @click.native="onSubmit" :loading="Loading">保存修改</el-button>
-			<!-- <el-button @click.native.prevent>取消</el-button> -->
 		</el-form-item>
 	</el-form>
 </template>
 
 <script>
-import { httpGet,httpPost } from "../../api/api";
+import { httpGet, httpPost } from "../../api/api";
 export default {
   data() {
     return {
+      rules: {
+        dc_name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        dc_phone: [
+          {
+            required: true,
+            pattern: /^1\d{10}$/,
+            message: "手机号格式不正确",
+            trigger: "blur"
+          }
+        ]
+      },
       form: {
-        name: "",
+        dc_name: "",
         email: "",
-        tel: "",
-        sex: "",
-        desc: "",
+        dc_phone: "",
+        gender: "",
+        intro: "",
         pwd: ""
       },
       imageUrl: "",
-      Loading:false
+      Loading: false
     };
   },
   methods: {
@@ -65,38 +74,40 @@ export default {
         .then(res => {
           console.log(12, res);
           this.imageUrl = res.data.dc_avatar;
-          this.form.name = res.data.dc_name;
+          this.form.dc_name = res.data.dc_name;
           this.form.email = res.data.email;
-          this.form.tel = res.data.phone;
-          this.form.sex = res.data.gender;
-          this.form.desc = res.data.desc;
+          this.form.dc_phone = res.data.dc_phone;
+          this.form.gender = res.data.gender;
+          this.form.intro = res.data.intro;
         })
         .catch(err => {
           console.log(err);
         });
     },
     onSubmit() {
-      console.log(this.form)
-      this.Loading=true;
-      httpPost('',this.form)
-      .then(res=>{
-        this.Loading=false;
-        if(res.code==200){
-          this.$massage({
-            message: res.msg,
-            type: "success"
-          })
-        }else{
-          this.$massage({
-            message: res.msg,
-            type: "warning"
-          })
-        }
-      })
-      .catch(err=>{
-        this.Loading=false;
-        console.log(err)
-      })
+      console.log(this.form);
+      this.Loading = true;
+      httpPost("/auth/updselfinfo", this.form)
+        .then(res => {
+          console.log(123, res);
+          this.Loading = false;
+          if (res.code == 200) {
+            this.$message({
+              message: res.msg+',重新登录才可以看到某些修改',
+              type: "success"
+            });
+            this.getUser();
+          } else {
+            this.$message({
+              message: res.msg,
+              type: "warning"
+            });
+          }
+        })
+        .catch(err => {
+          this.Loading = false;
+          console.log(err);
+        });
     },
     handleAvatarSuccess(res, file) {
       console.log(file);
